@@ -36,12 +36,17 @@ echo
 echo "Which projects should this fleet run on?"
 echo
 
-# Auto-discover candidate projects: git repos directly under ~/Developer/proj.
-PROJ_ROOT="$HOME/Developer/proj"
+# Auto-discover candidate projects only when the caller supplies a local root.
+PROJ_ROOT="${CODEX_FLEET_PROJECT_ROOT:-}"
 CANDIDATES=()
-while IFS= read -r d; do
-  CANDIDATES+=("$(basename "$d")")
-done < <(find "$PROJ_ROOT" -maxdepth 1 -mindepth 1 -type d -exec test -e '{}/.git' ';' -print 2>/dev/null | sort)
+if [ -n "$PROJ_ROOT" ] && [ -d "$PROJ_ROOT" ]; then
+  while IFS= read -r d; do
+    CANDIDATES+=("$(basename "$d")")
+  done < <(find "$PROJ_ROOT" -maxdepth 1 -mindepth 1 -type d -exec test -e '{}/.git' ';' -print 2>/dev/null | sort)
+else
+  echo "Set CODEX_FLEET_PROJECT_ROOT to enable numbered project discovery."
+  echo
+fi
 
 if [ ${#CANDIDATES[@]} -gt 0 ]; then
   echo "Available projects (git repos under $PROJ_ROOT):"
@@ -90,7 +95,11 @@ for raw in "${RAW_PROJECTS[@]}"; do
     name=$(basename "$path")
   else
     name="$raw"
-    path="$HOME/Developer/proj/$name"
+    if [ -n "$PROJ_ROOT" ]; then
+      path="$PROJ_ROOT/$name"
+    else
+      path="$raw"
+    fi
   fi
 
   if [ ! -d "$path" ]; then
