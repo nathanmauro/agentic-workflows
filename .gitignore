@@ -1,0 +1,10 @@
+.DS_Store
+.env
+*.log
+node_modules/
+.codex-goals/
+.claude/
+.firecrawl/
+captures/
+queue/
+tmp/
