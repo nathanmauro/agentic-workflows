@@ -1,0 +1,17 @@
+{
+  "memory": {
+    "kind": "durable-memory-adapter",
+    "capture_decision": "your-command capture-decision",
+    "capture_handoff": "your-command capture-handoff",
+    "capture_observation": "your-command capture-observation"
+  },
+  "notifications": {
+    "kind": "notification-adapter",
+    "send": "your-command notify"
+  },
+  "sessions": {
+    "kind": "session-launcher-adapter",
+    "launch_claude": "your-command launch-claude",
+    "launch_codex": "your-command launch-codex"
+  }
+}
