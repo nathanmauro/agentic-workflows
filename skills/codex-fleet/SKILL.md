@@ -35,8 +35,9 @@ non-danger-flagged repos a **draft PR** is opened per slice (stacked); the human
 along the way and **merges the top branch** to integrate. Danger-flagged/public repos
 stay strictly local. Nothing is ever merged by the fleet.
 
-Full design + rationale: `docs/codex-fleet-sdlc-mode-design.md`. Implementation
-plan: `docs/codex-fleet-sdlc-mode-plan.md`.
+Public workflow guide: `docs/workflows/codex-fleet.md`. Pattern rationale:
+`docs/concepts/fleet-execution.md`. Starter inputs and sanitized examples:
+`templates/fleet-projects.json` and `examples/fleet-round/`.
 
 ## When to use
 - "Look at my projects, figure out what's next on each, and let me steer it." (PLAN)
