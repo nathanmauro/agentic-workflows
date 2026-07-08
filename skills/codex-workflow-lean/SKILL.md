@@ -2,7 +2,7 @@
 name: codex-workflow-lean
 description: >
   The leanest Codex-delegated build: Claude is used ONLY for the Workflow orchestration
-  engine (deterministic fan-out, pipelines, structured output) and to own git. EVERY
+  engine (deterministic fan-out, pipelines, structured output) while the conductor owns git. EVERY
   agent — implementation AND verification — shells out to Codex (gpt-5.5). Use when the
   user wants maximum Claude-token savings: "codex for everything", "leanest", "claude
   only for the workflow", "minimize claude tokens". Triggers: "codex only", "leanest
@@ -13,11 +13,11 @@ description: >
 
 > Public adaptation note: This skill is a sanitized public version of a private local workflow. Replace model names, paths, notification channels, and memory adapters with the equivalents in your own agent harness.
 
-# Codex-only workflow (Claude = the workflow engine + git; Codex does everything else)
+# Codex-only workflow (Claude = the workflow engine; Codex does everything else)
 
 Maximum leanness on Claude tokens. Claude contributes exactly two things it alone can do:
 the **Workflow tool** (deterministic background orchestration, pipelines, structured
-output, the agent budget) and **git authorship** (user stays sole author). Everything
+output, the agent budget) while the **conductor owns git authorship** (user stays sole author). Everything
 with real token weight — implementation AND verification — is a `codex exec` call wrapped
 in a thin Claude agent that only relays.
 
@@ -50,7 +50,7 @@ Write each prompt to a temp file; pass via `"$(cat ...)"`. Bash timeout `600000`
 ## Run it
 
 ### Pre-flight (Claude main loop — same as hybrid)
-Lock scope → persist the plan (repo doc + memory bus) → branch → commit the plan.
+Lock scope → persist the plan (repo doc + durable memory adapter when available) → branch → commit the plan.
 
 ### Execute (Workflow tool — every agent wraps Codex)
 Customize `templates/workflow.js` (bundled here). Its pipeline:
@@ -61,12 +61,12 @@ Customize `templates/workflow.js` (bundled here). Its pipeline:
 - **Fix** — conditional `codex exec` for `real: true` issues only.
 
 ### Post-flight (Claude main loop)
-Rebuild/restart + confirm served (if an app) → review scope → commit (user sole author) → report.
+Rebuild/restart + confirm served (if an app) → review scope → commit through the conductor (user sole author) → report.
 
 ## Hard guardrails (in every Codex prompt)
 
 - Edit ONLY named paths; never touch out-of-scope layers.
-- Never `git add` / `commit` / `push` — Claude main loop owns git and authorship.
+- Never `git add` / `commit` / `push` — the conductor owns git and authorship.
 - No new runtime deps, no CDN.
 - Implementation prompt: terse summary of files changed. Review prompt: emit ONLY JSON
   matching the verdict schema.

@@ -87,7 +87,7 @@ esac
 git push -u origin "$branch"
 pr_url="$(gh pr create --draft --base "$base" --head "$branch" \
   --title "fleet r$round: $title_tail" \
-  --body "Automated fleet slice (round $round). Stacked on \`$base\`. Review and merge the top branch to integrate. Nathan sole author; no merge performed.")"
+  --body "Automated fleet slice (round $round). Stacked on \`$base\`. Review and merge the top branch to integrate. Human owner sole author; no merge performed.")"
 commit="$(git rev-parse --short HEAD 2>/dev/null || printf '')"
 append_lineage "$name" "$round" "$branch" "$base" "$pr_url" "$commit" "review" ""
 echo "DRAFT PR: $pr_url"

@@ -15,8 +15,8 @@ description: >
 
 # Codex-delegated workflow (hybrid: Claude orchestrates + verifies, Codex implements)
 
-The pattern proven in the Black Box `phase-2-polish` session. Claude is the conductor
-and the safety boundary; Codex (gpt-5.5, xhigh) is the engine. Heavy generation runs
+The pattern is a conductor/engine split: Claude is the conductor and the safety
+boundary; Codex (gpt-5.5, xhigh) is the engine. Heavy generation runs
 as **Codex** tokens; Claude only pays orchestration + an adversarial verify pass.
 
 ## Why this shape
@@ -26,7 +26,7 @@ as **Codex** tokens; Claude only pays orchestration + an adversarial verify pass
   with `--dangerously-bypass-approvals-and-sandbox`, so it edits files directly.
 - **Claude verifies.** Verification is the one place Claude earns its tokens: a different
   model checking Codex's work catches what self-review misses (cross-model adversarial check).
-- **Claude owns git.** The main loop makes every commit so the user stays sole author
+- **The conductor owns git.** The main loop makes every commit so the user stays sole author
   (no AI attribution, ever — see the global git rule). Codex is forbidden to commit.
 - **Everything on a branch.** Fully reversible; the outer Claude session is the boundary.
 
@@ -55,8 +55,7 @@ Bash timeout of `600000` ms (xhigh runs can take minutes).
    what it explicitly defers. Show the user the shape; let them redirect.
 2. **Persist the plan off-session** so it survives a `/clear`:
    - a repo doc (`ROADMAP.md` / `PLAN.md`), committed; and
-   - if the project has a memory bus (e.g. Black Box `captureDecision`/`captureHandoff`),
-     dogfood the plan into it.
+   - if the project has a durable memory adapter, dogfood the plan into it.
 3. **Branch** from the default branch (`git checkout -b <feature>`), commit the plan.
 
 ### 2. Execute (the Workflow tool — Codex does the work)

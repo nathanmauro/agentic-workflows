@@ -1,6 +1,6 @@
 ---
 name: claude-remote
-description: Use when Nathan asks to fire up, start, or launch a Claude Code remote-control session from Codex, especially Opus 4.8 or Fable, max effort, ultracode, mobile-visible, detached tmux, seeded prompts, or "remote Claude" requests.
+description: Use when the user asks to fire up, start, or launch a Claude Code remote-control session from Codex, especially Opus 4.8 or Fable, max effort, ultracode, mobile-visible, detached tmux, seeded prompts, or "remote Claude" requests.
 ---
 
 > Public adaptation note: This skill is a sanitized public version of a private local workflow. Replace model names, paths, notification channels, and memory adapters with the equivalents in your own agent harness.
@@ -15,12 +15,15 @@ settings, and Remote Control enabled in a detached tmux session. It can also
 start a named model such as Fable and pass an initial prompt into the new
 session.
 
+Prerequisites: `tmux`, the Claude Code CLI, and Claude Code Remote Control support
+must be installed and authenticated in the user's environment.
+
 ## Quick Start
 
 From the repo or directory the user wants Claude to work in:
 
 ```bash
-/Users/nathan/Developer/proj/cockpit/agents/codex/skills/claude-remote/scripts/start-claude-remote \
+<agentic-workflows-repo>/skills/claude-remote/scripts/start-claude-remote \
   --cwd "$PWD"
 ```
 

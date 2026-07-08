@@ -7,7 +7,7 @@
 # pausing for approval (full local autonomy). The safety net is the goal prompt,
 # which constrains all work to a NEW feature branch with PR handling delegated
 # to fleet-open-pr.sh and no merge.
-# Only use when Nathan has authorized unattended execution for this fleet run.
+# Only use when the human owner has authorized unattended execution for this fleet run.
 # Model / reasoning / tier are gpt-5.5 / xhigh / priority by default; override with
 # CODEX_MODEL / CODEX_EFFORT / CODEX_TIER env vars if needed.
 #
@@ -15,7 +15,7 @@
 # loop overwrites ~/.codex-goals/<name>.md with the original goalPrompt plus:
 #   --- CONTINUATION ---
 #   Earlier you asked: <Q>
-#   Nathan answered: <A>
+#   The human owner answered: <A>
 #   Continue the slice from where you left off; do not restart.
 # Then it calls launch.sh again with the same three arguments. No signature
 # change is required because the prompt file carries the continuation context.

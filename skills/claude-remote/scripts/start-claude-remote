@@ -17,7 +17,7 @@ Options:
   --session NAME        tmux session name. Defaults to claude-<label>-<timestamp>.
   --prompt TEXT         Initial prompt passed to Claude when the session opens.
   --settings-extra JSON JSON object merged on top of the base {"ultracode":true} settings.
-                        Used by cockpit-remote-fire to inject per-session Stop/Notification hooks.
+                        Used by external launchers to inject per-session Stop/Notification hooks.
   --dry-run             Print the shell command without starting tmux.
 EOF
 }

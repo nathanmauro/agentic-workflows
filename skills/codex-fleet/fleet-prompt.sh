@@ -4,7 +4,7 @@
 #
 # This is the data layer behind the native interaction surface: the loop runs
 # this helper, then calls the AskUserQuestion tool with each emitted batch
-# verbatim, so Nathan sees option-style prompts on mobile / CLU (with a freeform
+# verbatim, so the human owner sees option-style prompts on mobile / CLU (with a freeform
 # "Other" choice for redirect / discussion) instead of typing command grammar.
 #
 # usage:
@@ -16,7 +16,7 @@
 #   - Each question object is shaped for AskUserQuestion.questions[]:
 #       {header, question, multiSelect, options:[{label, description}, ...]}
 #   - "Other" (freeform) is added by AskUserQuestion automatically; the question
-#     text tells Nathan he can pick it to redirect / discuss / answer in words.
+#     text tells the human owner they can pick it to redirect / discuss / answer in words.
 #
 # The loop interprets answers and performs the SAME mirror writes as before
 # (approve -> approved_story+doing; skip -> skipped; redirect text -> approved_story;
