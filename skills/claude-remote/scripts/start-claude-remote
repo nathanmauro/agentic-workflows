@@ -1,0 +1,177 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: start-claude-remote [--cwd PATH] [--model MODEL] [--label NAME] [--session NAME] [--prompt TEXT] [--settings-extra JSON] [--dry-run]
+
+Starts Claude Code in a detached tmux session with:
+  --effort max
+  --settings '{"ultracode":true}'
+  --remote-control <label>
+
+Options:
+  --cwd PATH            Directory where Claude should start. Defaults to $PWD.
+  --model MODEL         Claude model ID. Defaults to claude-opus-4-8.
+  --label NAME          Remote Control and Claude session display name.
+  --session NAME        tmux session name. Defaults to claude-<label>-<timestamp>.
+  --prompt TEXT         Initial prompt passed to Claude when the session opens.
+  --settings-extra JSON JSON object merged on top of the base {"ultracode":true} settings.
+                        Used by cockpit-remote-fire to inject per-session Stop/Notification hooks.
+  --dry-run             Print the shell command without starting tmux.
+EOF
+}
+
+sanitize_name() {
+  print -r -- "$1" \
+    | tr '[:upper:]' '[:lower:]' \
+    | sed -E 's/[^a-z0-9_.-]+/-/g; s/^-+//; s/-+$//'
+}
+
+cwd="$PWD"
+model="claude-opus-4-8"
+label=""
+tmux_session=""
+prompt=""
+settings_extra=""
+dry_run=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --cwd)
+      [[ $# -gt 1 ]] || { usage >&2; exit 2; }
+      cwd="$2"
+      shift 2
+      ;;
+    --cwd=*)
+      cwd="${1#--cwd=}"
+      shift
+      ;;
+    --model)
+      [[ $# -gt 1 ]] || { usage >&2; exit 2; }
+      model="$2"
+      shift 2
+      ;;
+    --model=*)
+      model="${1#--model=}"
+      shift
+      ;;
+    --label)
+      [[ $# -gt 1 ]] || { usage >&2; exit 2; }
+      label="$2"
+      shift 2
+      ;;
+    --label=*)
+      label="${1#--label=}"
+      shift
+      ;;
+    --session)
+      [[ $# -gt 1 ]] || { usage >&2; exit 2; }
+      tmux_session="$2"
+      shift 2
+      ;;
+    --session=*)
+      tmux_session="${1#--session=}"
+      shift
+      ;;
+    --prompt)
+      [[ $# -gt 1 ]] || { usage >&2; exit 2; }
+      prompt="$2"
+      shift 2
+      ;;
+    --prompt=*)
+      prompt="${1#--prompt=}"
+      shift
+      ;;
+    --settings-extra)
+      [[ $# -gt 1 ]] || { usage >&2; exit 2; }
+      settings_extra="$2"
+      shift 2
+      ;;
+    --settings-extra=*)
+      settings_extra="${1#--settings-extra=}"
+      shift
+      ;;
+    --dry-run)
+      dry_run=1
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage >&2
+      exit 2
+      ;;
+  esac
+done
+
+[[ -d "$cwd" ]] || { print -u2 "cwd does not exist: $cwd"; exit 1; }
+
+if [[ -z "$label" ]]; then
+  # derive a short model slug (e.g. claude-fable-5 → fable, claude-opus-4-8 → opus)
+  model_slug="$(print -r -- "$model" | sed -E 's/^claude-//; s/-[0-9.]+$//')"
+  label="$(sanitize_name "$(basename "$cwd")-${model_slug}-ultra")"
+else
+  label="$(sanitize_name "$label")"
+fi
+[[ -n "$label" ]] || { print -u2 "label is empty after sanitization"; exit 1; }
+
+if [[ -z "$tmux_session" ]]; then
+  tmux_session="claude-${label}-$(date +%Y%m%d%H%M%S)"
+else
+  tmux_session="$(sanitize_name "$tmux_session")"
+fi
+[[ -n "$tmux_session" ]] || { print -u2 "tmux session is empty after sanitization"; exit 1; }
+
+command -v tmux >/dev/null || { print -u2 "tmux not found"; exit 1; }
+claude_bin="$(command -v claude || true)"
+[[ -n "$claude_bin" ]] || { print -u2 "claude not found"; exit 1; }
+
+settings='{"ultracode":true}'
+if [[ -n "$settings_extra" ]]; then
+  merged="$(python3 -c "
+import json, sys
+base = json.loads(sys.argv[1])
+extra = json.loads(sys.argv[2])
+for k, v in extra.items():
+    if k == 'hooks' and isinstance(v, dict) and isinstance(base.get('hooks'), dict):
+        for hk, hv in v.items():
+            base['hooks'][hk] = hv
+    else:
+        base[k] = v
+print(json.dumps(base, separators=(',', ':')))
+" "$settings" "$settings_extra" 2>/dev/null)" && settings="$merged" || \
+    print -u2 "start-claude-remote: warning: could not merge --settings-extra; using base settings"
+fi
+cmd="exec ${(q)claude_bin} --model ${(q)model} --effort max --settings ${(q)settings} --remote-control ${(q)label} --name ${(q)label}"
+[[ -n "$prompt" ]] && cmd+=" ${(q)prompt}"
+
+if [[ "$dry_run" -eq 1 ]]; then
+  print -r -- "$cmd"
+  exit 0
+fi
+
+if tmux has-session -t "$tmux_session" 2>/dev/null; then
+  print -u2 "tmux session already exists: $tmux_session"
+  exit 1
+fi
+
+tmux new-session -d -s "$tmux_session" -c "$cwd" "$cmd"
+sleep 2
+
+plain_capture="$(tmux capture-pane -pt "$tmux_session" -S -200 2>/dev/null || true)"
+raw_capture="$(tmux capture-pane -ept "$tmux_session" -S -200 2>/dev/null || true)"
+remote_url="$(print -r -- "$raw_capture" | LC_ALL=C grep -Eo 'https://claude\.ai/code/session_[A-Za-z0-9]+' | tail -1 || true)"
+
+print -r -- "tmux session: $tmux_session"
+print -r -- "attach: tmux attach -t $tmux_session"
+if [[ -n "$remote_url" ]]; then
+  print -r -- "remote: $remote_url"
+else
+  print -r -- "remote: not visible yet; attach or capture the pane after Claude finishes connecting"
+fi
+
+print -r -- ""
+print -r -- "$plain_capture" | grep -E 'Opus 4\.8|Fable|max effort|Remote Control|setup issue|model:' | tail -8 || true

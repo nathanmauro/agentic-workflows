@@ -1,0 +1,4 @@
+interface:
+  display_name: "Claude Remote"
+  short_description: "Start Claude Opus 4.8 remote sessions in ultracode."
+  default_prompt: "Fire me up a Claude remote session."
