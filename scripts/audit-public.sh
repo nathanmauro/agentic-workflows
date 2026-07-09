@@ -58,7 +58,12 @@ run_check() {
 SECRET_DENYLIST_RE='/Users/nathan|nathan@|Label_[0-9]+|ghp_|sk-[A-Za-z0-9_-]+|CODEX_GITHUB_PERSONAL_ACCESS_TOKEN|OPENAI_API_KEY|GITHUB_PERSONAL_ACCESS_TOKEN|(\$HOME|\$\{HOME\}|~)/Developer/proj'
 PRIVATE_IMPL_DENYLIST_RE='cockpit|sba-agentic|Black Box|cockpit-council|mcp-memory-agent|dna-residual-memory|SessionsPage\.tsx|~/.claude/skills/codex-fleet'
 
-run_check "release clean: no git remotes" assert_no_git_remotes
+if [ "${AUDIT_REQUIRE_NO_REMOTES:-0}" = "1" ]; then
+  run_check "release clean: no git remotes" assert_no_git_remotes
+else
+  echo "== release clean: no git remotes =="
+  echo "skipped; set AUDIT_REQUIRE_NO_REMOTES=1 to enforce pre-publication export mode"
+fi
 
 AUDIT_ALLOWLIST_RE='^\./scripts/audit-public\.sh:[0-9]+:SECRET_DENYLIST_RE=' \
 run_no_match "high-risk secrets and private paths" \

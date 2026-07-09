@@ -22,9 +22,10 @@ This is Nathan Mauro's public field manual and working kit for agentic software 
 ## Start Here
 
 1. Read `docs/concepts/agentic-operating-system.md`.
-2. Copy `templates/AGENTS.md` into a project and adapt it.
-3. Try one small handoff using `templates/HANDOFF.md`.
-4. Study `examples/fleet-round/` before running a fleet-style workflow.
+2. Skim `docs/diagrams.md` for a visual map of the core workflows.
+3. Copy `templates/AGENTS.md` into a project and adapt it.
+4. Try one small handoff using `templates/HANDOFF.md`.
+5. Study `examples/fleet-round/` before running a fleet-style workflow.
 
 ## What's Included
 
@@ -32,6 +33,7 @@ This is Nathan Mauro's public field manual and working kit for agentic software 
 - `templates/`: project instructions, handoffs, living specs, and local adapter examples.
 - `examples/`: sanitized examples of a fleet round, handoff, and council review.
 - `docs/`: concepts and workflow explanations.
+- `docs/diagrams.md`: Mermaid diagrams for the operating system, fleet rounds, handoffs, council review, delegation, and the public/private boundary.
 
 ## What Is Not Included
 
