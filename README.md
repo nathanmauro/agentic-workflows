@@ -4,6 +4,8 @@ A practical operating system for working with multiple coding agents: fleet exec
 
 This is Nathan Mauro's public field manual and working kit for agentic software development. It is not a vendor SDK and it is not a prompt dump. It is a set of patterns, skills, templates, and examples for coordinating coding agents as a real engineering system.
 
+The kit is intentionally adaptive. These workflows change as the tools, models, failure modes, and local operating habits change. Treat the repo as a living field manual: copy what is useful, keep the verification and handoff discipline, and revise the harness when reality proves a better pattern.
+
 ## What This Is
 
 - A workflow kit for running multiple coding agents without losing context.
@@ -21,23 +23,23 @@ This is Nathan Mauro's public field manual and working kit for agentic software 
 
 ## Start Here
 
-1. Read `docs/concepts/agentic-operating-system.md`.
-2. Skim `docs/diagrams.md` for a visual map of the core workflows.
-3. Copy `templates/AGENTS.md` into a project and adapt it.
-4. Try one small handoff using `templates/HANDOFF.md`.
-5. Study `examples/fleet-round/` before running a fleet-style workflow.
+1. Read [`docs/concepts/agentic-operating-system.md`](docs/concepts/agentic-operating-system.md).
+2. Skim [`docs/diagrams.md`](docs/diagrams.md) for a visual map of the core workflows.
+3. Copy [`templates/AGENTS.md`](templates/AGENTS.md) into a project and adapt it.
+4. Try one small handoff using [`templates/HANDOFF.md`](templates/HANDOFF.md).
+5. Study [`examples/fleet-round/`](examples/fleet-round/) before running a fleet-style workflow.
 
 ## What's Included
 
-- `skills/`: portable skill drafts and workflow instructions.
-- `templates/`: project instructions, handoffs, living specs, and local adapter examples.
-- `examples/`: sanitized examples of a fleet round, handoff, and council review.
-- `docs/`: concepts and workflow explanations.
-- `docs/diagrams.md`: Mermaid diagrams for the operating system, fleet rounds, handoffs, council review, delegation, and the public/private boundary.
+- [`skills/`](skills/): portable skill drafts and workflow instructions.
+- [`templates/`](templates/): project instructions, handoffs, living specs, and local adapter examples.
+- [`examples/`](examples/): sanitized examples of a fleet round, handoff, and council review.
+- [`docs/`](docs/): concepts and workflow explanations.
+- [`docs/diagrams.md`](docs/diagrams.md): Mermaid diagrams for the operating system, fleet rounds, handoffs, council review, delegation, and the public/private boundary.
 
 ## What Is Not Included
 
-This repo intentionally omits private machine wiring: real account IDs, local launch agents, Gmail or Todoist structures, raw session transcripts, personal project inventories, and private memory stores. See `docs/private-public-boundary.md`.
+This repo intentionally omits private machine wiring: real account IDs, local launch agents, Gmail or Todoist structures, raw session transcripts, personal project inventories, and private memory stores. See [`docs/private-public-boundary.md`](docs/private-public-boundary.md).
 
 ## Status
 
