@@ -20,4 +20,4 @@ A stale spec can mislead an agent more efficiently than no spec at all. Generate
 
 ## Related Templates
 
-- `templates/project-spec.md`
+- [`templates/project-spec.md`](../../templates/project-spec.md)

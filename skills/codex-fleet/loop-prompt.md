@@ -2,11 +2,11 @@
 
 This drives a multi-round Codex fleet with Claude as orchestrator using native `/loop`, `ScheduleWakeup`, Workflow, `AskUserQuestion`, terminal output, and `PushNotification`.
 
-**The human owner steers through native prompts.** Every decision the human owner makes — approving a slice, redirecting it, answering a mid-flight clarifying question — is surfaced with the **`AskUserQuestion`** tool: the standard Claude Code option prompt they see on mobile / CLU, with tappable options plus a freeform **Other** choice to type or talk it through. The old typed command grammar (`1 approve`, `1 skip`, …) survives ONLY as a non-interactive fallback (headless/cron hosts) and must never be the primary surface. The `fleet-prompt.sh` helper builds the exact `AskUserQuestion` payloads so they always satisfy the tool's shape.
+**The human owner steers through native prompts.** Every decision the human owner makes — approving a slice, redirecting it, answering a mid-flight clarifying question — is surfaced with the **`AskUserQuestion`** tool: the standard Claude Code option prompt they see on mobile / CLU, with tappable options plus a freeform **Other** choice to type or talk it through. The old typed command grammar (`1 approve`, `1 skip`, …) survives ONLY as a non-interactive fallback (headless/cron hosts) and must never be the primary surface. The [`fleet-prompt.sh`](fleet-prompt.sh) helper builds the exact `AskUserQuestion` payloads so they always satisfy the tool's shape.
 
-Preferred launch: run `start-fleet.sh` from the agentic-workflows repo. It seeds `~/.codex-goals/state.env`, including `FLEET_SKILL_DIR`, `projects.json`, spec mirrors, and the ready-to-paste loop instruction.
+Preferred launch: run [`start-fleet.sh`](start-fleet.sh) from the agentic-workflows repo. It seeds `~/.codex-goals/state.env`, including `FLEET_SKILL_DIR`, `projects.json`, spec mirrors, and the ready-to-paste loop instruction.
 
-The loop never edits a project working tree except the commit-gate fallback commit described in `PHASE == RUNNING`. All other orchestration state writes stay under `~/.codex-goals/`. `MODE=DO` skips only `APPROVAL`; it keeps living specs, clarification polling, board refresh, draft-PR/local-only handling through `fleet-open-pr.sh`, and REVIEW tracking.
+The loop never edits a project working tree except the commit-gate fallback commit described in `PHASE == RUNNING`. All other orchestration state writes stay under `~/.codex-goals/`. `MODE=DO` skips only `APPROVAL`; it keeps living specs, clarification polling, board refresh, draft-PR/local-only handling through [`fleet-open-pr.sh`](fleet-open-pr.sh), and REVIEW tracking.
 
 ---
 
@@ -142,7 +142,7 @@ For each idle project:
    - Commit as the human owner only; no `Co-Authored-By`, no "Generated with", no push, no PR, no merge.
 3. If verify fails, set mirror `status="blocked"` and record the failure note. Do not do git surgery.
 4. Compare current status with `~/.codex-goals/<name>.pre.status`. If a pre-existing dirty file, `.claude`, `.firecrawl`, `.idea`, or a danger-flagged file was folded into the slice, set `status="blocked"` and record a deviation note. Do not rewrite history or attempt repair.
-5. Read the latest `branch_lineage` and PR/local-only entry from the mirror. The slice should already have run `fleet-open-pr.sh`; do not push or open PRs by hand. If the committed slice has no lineage entry, mark it `blocked` with a note that `fleet-open-pr.sh` did not record review state.
+5. Read the latest `branch_lineage` and PR/local-only entry from the mirror. The slice should already have run [`fleet-open-pr.sh`](fleet-open-pr.sh); do not push or open PRs by hand. If the committed slice has no lineage entry, mark it `blocked` with a note that [`fleet-open-pr.sh`](fleet-open-pr.sh) did not record review state.
 6. If the tree is clean and lineage exists for this round, set mirror `status="review"` and record a trajectory note comparing intended `keyFiles` to actual changed files.
 
 When every project for the round has reached a round-terminal state — `review`, `done`, `skipped`, or **terminally** `blocked` (failed verify, or a folded danger/deviation) — set `PHASE=REVIEW` and continue to the REVIEW/advance logic. A project `blocked` on an **open or notified clarification question is NOT round-terminal** (its `pending_question` is unanswered); per the clarification hold above it keeps the round in `RUNNING` until the human owner answers and the slice resumes.
@@ -163,7 +163,7 @@ Then:
 2. Print `bash "$FLEET_SKILL_DIR/fleet-board.sh" show`.
 3. Send `PushNotification` containing `bash "$FLEET_SKILL_DIR/fleet-board.sh" text` plus: `review with fleet-review <project> <round>`.
 
-`REVIEW -> DONE` acks happen out-of-band through `fleet-review.sh`; the loop does not block the whole fleet waiting for acks.
+`REVIEW -> DONE` acks happen out-of-band through [`fleet-review.sh`](fleet-review.sh); the loop does not block the whole fleet waiting for acks.
 
 If `ROUND < TOTAL_ROUNDS`:
 

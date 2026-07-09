@@ -22,5 +22,5 @@ A biased prompt can make every reviewer repeat the same assumption. A moderator 
 
 Related material:
 
-- `skills/council/SKILL.md`
-- `templates/HANDOFF.md`
+- [`skills/council/SKILL.md`](../../skills/council/SKILL.md)
+- [`templates/HANDOFF.md`](../../templates/HANDOFF.md)

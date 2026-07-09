@@ -13,5 +13,5 @@ The conductor proposes one vertical slice per project, the human owner approves,
 
 ## Files
 
-- `project.spec.md` - living spec snapshot for one project.
-- `board.txt` - terminal board after the round.
+- [`project.spec.md`](project.spec.md) - living spec snapshot for one project.
+- [`board.txt`](board.txt) - terminal board after the round.

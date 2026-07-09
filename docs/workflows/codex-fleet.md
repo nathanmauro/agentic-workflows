@@ -6,10 +6,10 @@ Use this workflow when several projects need bounded progress and each project c
 
 ## Inputs
 
-- A project registry such as `templates/fleet-projects.json`.
+- A project registry such as [`templates/fleet-projects.json`](../../templates/fleet-projects.json).
 - A living spec for each project that names intent, stakes, current round, and verification.
 - A conductor prompt that defines the round objective and review gates.
-- Access to the public runner path `skills/codex-fleet/start-fleet.sh`.
+- Access to the public runner path [`skills/codex-fleet/start-fleet.sh`](../../skills/codex-fleet/start-fleet.sh).
 
 ## Steps
 
@@ -41,5 +41,5 @@ Each project must verify with the concrete command named in its living spec or c
 - In `PLAN`, do not run the vertical slice until approval is recorded.
 - In `DO`, keep clarification, spec, board, and review gates even though initial approval is skipped.
 - Commits and gated draft pull requests can happen before the human `REVIEW -> DONE` acknowledgement when the round allows them.
-- Push and draft pull request creation are controlled by fail-closed `fleet-open-pr.sh`.
+- Push and draft pull request creation are controlled by fail-closed [`fleet-open-pr.sh`](../../skills/codex-fleet/fleet-open-pr.sh).
 - Require human `REVIEW -> DONE` acknowledgement before treating the slice as done, merging, publishing final artifacts, or advancing reviewed work.

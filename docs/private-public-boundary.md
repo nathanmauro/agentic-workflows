@@ -16,7 +16,7 @@ This repo is a public, curated export of workflow patterns from a private local 
 - Gmail labels, Gmail filters, Todoist project IDs, or personal task structure.
 - Launchd plists and local daemon wiring tied to one machine.
 - Telegram, phone, or notification routing tied to a real account.
-- Raw Black Box, session, or transcript data.
+- Raw [Black Box](https://github.com/nathanmauro/black-box), session, or transcript data.
 - Family, career, finance, health, or other personal operating context.
 - Private project inventories and private repo names unless intentionally public.
 

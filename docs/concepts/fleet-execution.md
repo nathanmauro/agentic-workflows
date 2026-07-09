@@ -20,5 +20,5 @@ Sharing one dirty worktree across multiple agents creates merge risk and unclear
 
 ## Related Templates
 
-- `templates/fleet-projects.json`
-- `templates/project-spec.md`
+- [`templates/fleet-projects.json`](../../templates/fleet-projects.json)
+- [`templates/project-spec.md`](../../templates/project-spec.md)
