@@ -20,7 +20,7 @@ A prompt pile is not an operating system; long instruction dumps without state, 
 
 ## Related Templates
 
-- `templates/AGENTS.md`
-- `templates/HANDOFF.md`
-- `templates/project-spec.md`
-- `templates/local-adapters.example.json`
+- [`templates/AGENTS.md`](../../templates/AGENTS.md)
+- [`templates/HANDOFF.md`](../../templates/HANDOFF.md)
+- [`templates/project-spec.md`](../../templates/project-spec.md)
+- [`templates/local-adapters.example.json`](../../templates/local-adapters.example.json)

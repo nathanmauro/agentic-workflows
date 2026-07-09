@@ -10,7 +10,7 @@ Write a compact handoff that captures repo state, files changed, verification ru
 
 ## How To Apply It
 
-Use `templates/HANDOFF.md` at closeout or whenever work remains. Include the repository, branch, commit or dirty state, changed files, verification commands and results, live-system effects, what was not done, and the smallest concrete resume step.
+Use [`templates/HANDOFF.md`](../../templates/HANDOFF.md) at closeout or whenever work remains. Include the repository, branch, commit or dirty state, changed files, verification commands and results, live-system effects, what was not done, and the smallest concrete resume step.
 
 If a durable memory adapter is available, store the same compact handoff there. If not, keep a handoff file or repo note close to the work.
 
@@ -20,5 +20,5 @@ Transcript dumps are too noisy to use as handoffs and can expose private data. A
 
 ## Related Templates
 
-- `templates/HANDOFF.md`
-- `templates/local-adapters.example.json`
+- [`templates/HANDOFF.md`](../../templates/HANDOFF.md)
+- [`templates/local-adapters.example.json`](../../templates/local-adapters.example.json)

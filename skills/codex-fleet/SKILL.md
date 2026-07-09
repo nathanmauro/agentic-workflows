@@ -35,9 +35,9 @@ non-danger-flagged repos a **draft PR** is opened per slice (stacked); the human
 along the way and **merges the top branch** to integrate. Danger-flagged/public repos
 stay strictly local. Nothing is ever merged by the fleet.
 
-Public workflow guide: `docs/workflows/codex-fleet.md`. Pattern rationale:
-`docs/concepts/fleet-execution.md`. Starter inputs and sanitized examples:
-`templates/fleet-projects.json` and `examples/fleet-round/`.
+Public workflow guide: [`docs/workflows/codex-fleet.md`](../../docs/workflows/codex-fleet.md). Pattern rationale:
+[`docs/concepts/fleet-execution.md`](../../docs/concepts/fleet-execution.md). Starter inputs and sanitized examples:
+[`templates/fleet-projects.json`](../../templates/fleet-projects.json) and [`examples/fleet-round/`](../../examples/fleet-round/).
 
 ## When to use
 - "Look at my projects, figure out what's next on each, and let me steer it." (PLAN)
@@ -75,11 +75,11 @@ drives the board.
 
 Two files, **two writers, no contention**:
 - **In-repo `docs/fleet/spec.md`** — markdown body + YAML frontmatter, versioned with
-  the project, PR-reviewed. Written by **Codex** via `fleet-spec.sh render` and
+  the project, PR-reviewed. Written by **Codex** via [`fleet-spec.sh`](fleet-spec.sh) `render` and
   committed *with* the slice.
 - **Fleet-side `~/.codex-goals/<name>.spec.json`** — live machine state, written by the
   **orchestrator (Claude)** (plus Codex's own slice `branch_lineage` via the
-  `fleet-open-pr.sh` helper). Never committed; the board derives from it.
+  [`fleet-open-pr.sh`](fleet-open-pr.sh) helper). Never committed; the board derives from it.
 
 Round N reads the spec as primary context, so decisions/guardrails carry forward
 instead of being re-derived from a cold recon.
@@ -97,7 +97,7 @@ to a `PushNotification` + typed reply.
 
 ## Draft PR per slice (tier/danger gated)
 
-At the commit gate Codex runs `fleet-open-pr.sh <name> <round> <branch>`, which **fails
+At the commit gate Codex runs [`fleet-open-pr.sh`](fleet-open-pr.sh) `<name> <round> <branch>`, which **fails
 closed**: it goes LOCAL-ONLY when `push_allowed != true`, `gh` is missing, there's no
 `origin`, or the danger hint matches `PUBLIC|never push|do not push`; otherwise it
 pushes and opens a **draft** PR stacked on the previous slice's branch (human owner sole
@@ -109,10 +109,10 @@ tier. Local-only slices print a ready-to-run `gh pr create` you can fire by hand
 `tier ∈ {prototype, production}` per project calibrates how many gates apply (production
 = full eval bar + draft PR + REVIEW ack; prototype = lighter, may pin to auto-DO).
 
-`fleet-board.sh build|show|text` renders a **fleet-wide grid** (projects × `Planned ·
+[`fleet-board.sh`](fleet-board.sh) `build|show|text` renders a **fleet-wide grid** (projects × `Planned ·
 Doing · Review · Done · Blocked`), regenerated each loop tick as a pure read-only view —
 zero agent bookkeeping. Terminal = `show`; mobile push = `text`. The one human-driven
-transition is **REVIEW → DONE**: `fleet-review.sh <project> <round>` acks a reviewed
+transition is **REVIEW → DONE**: [`fleet-review.sh`](fleet-review.sh) `<project> <round>` acks a reviewed
 branch; unreviewed work accumulates **visibly**, never silently.
 
 **ACTIVE-detection (hard-won):** a session is still working if its pane shows
@@ -152,17 +152,17 @@ commits are recoverable.
 
 | File | Role |
 |------|------|
-| `start-fleet.sh` | Entry point — interactive projects/hints/**tier**/**mode**/rounds, health checks + `push_allowed`, seeds spec mirrors + state, writes `loop-instruction.txt` |
-| `init-fleet.sh` | Seed `state.env` (incl. `MODE`) + the 6-column `results.tsv` ledger |
-| `recon-workflow.js` | Recon+Vet Workflow — reads the living spec, proposes the next **vertical slice**, emits the goal prompt with the spec-render + clarification + PR-gate git workflow |
-| `loop-prompt.md` | The `/loop` driver — `MODE/PHASE` machine (APPROVAL, clarification poll + round-hold, commit gate, REVIEW + board) |
-| `fleet-prompt.sh` | Builds the native `AskUserQuestion` payloads — `approval <round>` and `clarify` — so the human owner steers with option prompts + freeform, not typed grammar (fixture-tested for the tool's shape limits) |
-| `launch.sh` | tmux + `codex -a never` launcher (with continuation-relaunch for the clarification channel) |
-| `fleet-spec.sh` | Living-spec data layer — `init`/`get`/`set` the JSON mirror + `render` it into in-repo `docs/fleet/spec.md` |
-| `fleet-open-pr.sh` | Fail-closed push gate — draft PR per slice (stacked) or LOCAL-ONLY fallback; records `branch_lineage` |
-| `fleet-board.sh` | Slim fleet-wide board — `build` (derive `board.json`) / `show` (ASCII grid) / `text` (mobile) |
-| `fleet-review.sh` | `REVIEW → DONE` ack — updates the mirror + `results.tsv` status, refreshes the board |
-| `tests/` | Fixture tests for the helper layer (`test-spec.sh`, `test-board.sh`, `test-push-gate.sh`) |
+| [`start-fleet.sh`](start-fleet.sh) | Entry point — interactive projects/hints/**tier**/**mode**/rounds, health checks + `push_allowed`, seeds spec mirrors + state, writes `loop-instruction.txt` |
+| [`init-fleet.sh`](init-fleet.sh) | Seed `state.env` (incl. `MODE`) + the 6-column `results.tsv` ledger |
+| [`recon-workflow.js`](recon-workflow.js) | Recon+Vet Workflow — reads the living spec, proposes the next **vertical slice**, emits the goal prompt with the spec-render + clarification + PR-gate git workflow |
+| [`loop-prompt.md`](loop-prompt.md) | The `/loop` driver — `MODE/PHASE` machine (APPROVAL, clarification poll + round-hold, commit gate, REVIEW + board) |
+| [`fleet-prompt.sh`](fleet-prompt.sh) | Builds the native `AskUserQuestion` payloads — `approval <round>` and `clarify` — so the human owner steers with option prompts + freeform, not typed grammar (fixture-tested for the tool's shape limits) |
+| [`launch.sh`](launch.sh) | tmux + `codex -a never` launcher (with continuation-relaunch for the clarification channel) |
+| [`fleet-spec.sh`](fleet-spec.sh) | Living-spec data layer — `init`/`get`/`set` the JSON mirror + `render` it into in-repo `docs/fleet/spec.md` |
+| [`fleet-open-pr.sh`](fleet-open-pr.sh) | Fail-closed push gate — draft PR per slice (stacked) or LOCAL-ONLY fallback; records `branch_lineage` |
+| [`fleet-board.sh`](fleet-board.sh) | Slim fleet-wide board — `build` (derive `board.json`) / `show` (ASCII grid) / `text` (mobile) |
+| [`fleet-review.sh`](fleet-review.sh) | `REVIEW → DONE` ack — updates the mirror + `results.tsv` status, refreshes the board |
+| [`tests/`](tests/) | Fixture tests for the helper layer ([`test-spec.sh`](tests/test-spec.sh), [`test-board.sh`](tests/test-board.sh), [`test-push-gate.sh`](tests/test-push-gate.sh)) |
 
 ## Common mistakes
 - Reusing a stale recon (resuming the Workflow) instead of re-running it fresh each round
@@ -172,9 +172,9 @@ commits are recoverable.
   a paused session. A pending question **holds the round**.
 - `git add -A` / committing on idle without the scope + deviation check → folds in dirty
   files.
-- Pushing a danger-flagged/public repo → `fleet-open-pr.sh` fails closed; never bypass it
+- Pushing a danger-flagged/public repo → [`fleet-open-pr.sh`](fleet-open-pr.sh) fails closed; never bypass it
   by pushing by hand.
 - Falling back to the typed `1 approve` / `1 skip` grammar when `AskUserQuestion` can reach
   the human owner → that grammar is for headless hosts only. The native option prompt (built by
-  `fleet-prompt.sh`) is the primary surface for approval AND clarification; pass its
+  [`fleet-prompt.sh`](fleet-prompt.sh)) is the primary surface for approval AND clarification; pass its
   `questions` to `AskUserQuestion` verbatim, batched ≤4.

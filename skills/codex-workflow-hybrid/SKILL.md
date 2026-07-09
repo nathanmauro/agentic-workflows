@@ -7,8 +7,8 @@ description: >
   to "use codex", "defer to codex", "save claude tokens", "use codex for the heavy
   lifting", or run a phase/feature through a Codex-delegated workflow. Triggers:
   "codex workflow", "delegate to codex", "lean on claude tokens", "hybrid codex".
-  This is the BALANCED variant (Claude verifies). For maximum leanness where Codex
-  also verifies, use codex-workflow-lean instead.
+This is the BALANCED variant (Claude verifies). For maximum leanness where Codex
+also verifies, use [codex-workflow-lean](../codex-workflow-lean/SKILL.md) instead.
 ---
 
 > Public adaptation note: This skill is a sanitized public version of a private local workflow. Replace model names, paths, notification channels, and memory adapters with the equivalents in your own agent harness.
@@ -60,7 +60,7 @@ Bash timeout of `600000` ms (xhigh runs can take minutes).
 
 ### 2. Execute (the Workflow tool — Codex does the work)
 
-Customize `templates/workflow.js` (bundled next to this file) for the task and pass it
+Customize [`templates/workflow.js`](templates/workflow.js) (bundled next to this file) for the task and pass it
 inline to the Workflow tool. Its pipeline:
 
 - **Implement** — one (or a few) thin Claude agents, each running `codex exec` on a

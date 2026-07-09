@@ -9,7 +9,7 @@ Use this workflow when a Codex-led session needs Claude for bounded review, plan
 - A bounded Claude prompt with the question, repo path, constraints, relevant files, and expected output.
 - A tmux or remote-control environment capable of launching and monitoring the Claude session.
 - Any project instructions, living spec, handoff, or context pack needed for the review.
-- The public path `skills/claude-remote/scripts/start-claude-remote`.
+- The public path [`skills/claude-remote/scripts/start-claude-remote`](../../skills/claude-remote/scripts/start-claude-remote).
 
 ## Steps
 

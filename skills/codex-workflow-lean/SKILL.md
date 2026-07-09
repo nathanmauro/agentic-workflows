@@ -26,7 +26,7 @@ in a thin Claude agent that only relays.
 - The user explicitly wants the leanest possible Claude footprint.
 - The task is well-specified or lower-risk, OR a human will eyeball the result before merge.
 
-If correctness is high-stakes, prefer **codex-workflow-hybrid** — its Claude verify lens
+If correctness is high-stakes, prefer **[codex-workflow-hybrid](../codex-workflow-hybrid/SKILL.md)** — its Claude verify lens
 is a *different model* checking Codex, which catches what self-review can't. Here, Codex
 reviews its own diff: cheaper, but blind to its own blind spots. Mitigate by (a) using a
 *fresh* Codex review pass with an explicitly adversarial prompt ("try to find what's
@@ -53,7 +53,7 @@ Write each prompt to a temp file; pass via `"$(cat ...)"`. Bash timeout `600000`
 Lock scope → persist the plan (repo doc + durable memory adapter when available) → branch → commit the plan.
 
 ### Execute (Workflow tool — every agent wraps Codex)
-Customize `templates/workflow.js` (bundled here). Its pipeline:
+Customize [`templates/workflow.js`](templates/workflow.js) (bundled here). Its pipeline:
 - **Implement** — thin Claude agent runs `codex exec` to write the code.
 - **Review** — thin Claude agent runs a SECOND, adversarial `codex exec` that inspects
   `git diff` and emits a JSON verdict; the agent's `schema` validates/relays it. No Claude
