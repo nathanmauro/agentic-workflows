@@ -77,9 +77,11 @@ run_no_match "private implementation names outside boundary docs" \
   "$PRIVATE_IMPL_DENYLIST_RE" \
   .
 
+# Keep placeholder detection in prose while allowing the small, intentional set of
+# HTML layout tags used by the GitHub README. SVG assets are validated separately.
 run_no_match "unresolved prose placeholders outside skills and templates" \
-  rg -n -g '!/.git/**' -g '!skills/**' -g '!templates/**' \
-  'TBD|TODO|FIXME|<[^>]+>' \
+  rg -nP -g '!/.git/**' -g '!skills/**' -g '!templates/**' -g '!docs/assets/**' \
+  'TBD|TODO|FIXME|<(?!/?(?:p|h1|strong|br|a|img|sub)(?:\s|/?>))[^>]+>' \
   README.md docs examples
 
 run_check "json validation: fleet projects" \

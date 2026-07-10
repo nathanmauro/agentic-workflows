@@ -1,0 +1,102 @@
+<svg width="1440" height="720" viewBox="0 0 1440 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Agentic Workflows</title>
+  <desc id="desc">An editorial field-manual cover showing a workflow from intent through specification, delegation, verification, shipping, and handoff.</desc>
+
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" stroke="#EDE7DB" stroke-opacity="0.09" stroke-width="1"/>
+    </pattern>
+    <pattern id="microGrid" width="12" height="12" patternUnits="userSpaceOnUse">
+      <path d="M12 0H0V12" stroke="#11100E" stroke-opacity="0.1" stroke-width="1"/>
+    </pattern>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+    <clipPath id="canvas">
+      <rect width="1440" height="720" rx="4"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#canvas)">
+    <rect width="1440" height="720" fill="#11100E"/>
+    <rect width="1440" height="720" fill="url(#grid)"/>
+
+    <!-- Registration marks and issue metadata -->
+    <path d="M44 72V44H72M1368 44H1396V72M44 648V676H72M1368 676H1396V648" stroke="#EDE7DB" stroke-opacity="0.4" stroke-width="2"/>
+    <circle cx="58" cy="58" r="4" fill="#CBFF4A"/>
+    <text x="82" y="64" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="17" letter-spacing="2.6">OPEN FIELD MANUAL / 01</text>
+    <text x="1362" y="64" text-anchor="end" fill="#EDE7DB" fill-opacity="0.64" font-family="Menlo, Monaco, monospace" font-size="15" letter-spacing="2">SYSTEMS FOR SHIPPING</text>
+
+    <!-- Editorial title block -->
+    <rect x="58" y="112" width="16" height="232" fill="#FF5A36"/>
+    <text x="106" y="207" fill="#EDE7DB" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="112" font-weight="800" letter-spacing="-3">AGENTIC</text>
+    <text x="101" y="318" fill="#EDE7DB" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="112" font-weight="800" letter-spacing="-3">WORKFLOWS</text>
+
+    <line x1="106" y1="351" x2="650" y2="351" stroke="#EDE7DB" stroke-opacity="0.35"/>
+    <text x="106" y="391" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="18" letter-spacing="2.7">THE OPERATING SYSTEM AROUND THE MODEL</text>
+    <text x="106" y="438" fill="#EDE7DB" fill-opacity="0.76" font-family="Avenir Next, Helvetica Neue, sans-serif" font-size="23" font-weight="500">Direct the work. Prove the result.</text>
+    <text x="106" y="472" fill="#EDE7DB" fill-opacity="0.76" font-family="Avenir Next, Helvetica Neue, sans-serif" font-size="23" font-weight="500">Make the next session smarter.</text>
+
+    <!-- Workflow circuit -->
+    <g filter="url(#softShadow)">
+      <rect x="750" y="112" width="626" height="456" rx="2" fill="#EDE7DB"/>
+    </g>
+    <rect x="750" y="112" width="626" height="456" fill="url(#microGrid)"/>
+
+    <text x="782" y="151" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="14" font-weight="700" letter-spacing="2.5">THE SHIP LOOP</text>
+    <text x="1344" y="151" text-anchor="end" fill="#11100E" fill-opacity="0.55" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.6">REPEATABLE / INSPECTABLE</text>
+
+    <!-- Connector circuit -->
+    <path d="M836 244H941M1044 244H1147M1250 244H1302V357H1250" stroke="#11100E" stroke-width="3"/>
+    <path d="M1147 357H1044M941 357H836V423H1044" stroke="#11100E" stroke-width="3"/>
+    <path d="M1044 423H1250V357" stroke="#11100E" stroke-width="3" stroke-dasharray="8 8"/>
+
+    <!-- Arrowheads -->
+    <path d="M931 236L943 244L931 252V236Z" fill="#11100E"/>
+    <path d="M1137 236L1149 244L1137 252V236Z" fill="#11100E"/>
+    <path d="M1260 349L1248 357L1260 365V349Z" fill="#11100E"/>
+    <path d="M1054 349L1042 357L1054 365V349Z" fill="#11100E"/>
+    <path d="M931 349L943 357L931 365V349Z" fill="#11100E"/>
+    <path d="M1240 415L1252 423L1240 431V415Z" fill="#11100E"/>
+
+    <!-- Nodes -->
+    <rect x="782" y="204" width="104" height="80" fill="#11100E"/>
+    <text x="834" y="236" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">01</text>
+    <text x="834" y="261" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="16" font-weight="700" letter-spacing="1.7">INTENT</text>
+
+    <rect x="940" y="204" width="104" height="80" fill="#FF5A36"/>
+    <text x="992" y="236" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="700" letter-spacing="1.8">02</text>
+    <text x="992" y="261" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="16" font-weight="700" letter-spacing="1.7">SPEC</text>
+
+    <rect x="1146" y="204" width="104" height="80" fill="#11100E"/>
+    <text x="1198" y="236" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">03</text>
+    <text x="1198" y="261" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="700" letter-spacing="1.2">DELEGATE</text>
+
+    <rect x="1146" y="317" width="104" height="80" fill="#CBFF4A"/>
+    <text x="1198" y="349" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="700" letter-spacing="1.8">04</text>
+    <text x="1198" y="374" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="700" letter-spacing="1.2">VERIFY</text>
+
+    <rect x="940" y="317" width="104" height="80" fill="#11100E"/>
+    <text x="992" y="349" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">05</text>
+    <text x="992" y="374" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="16" font-weight="700" letter-spacing="1.7">SHIP</text>
+
+    <rect x="782" y="317" width="104" height="80" fill="#11100E"/>
+    <text x="834" y="349" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">06</text>
+    <text x="834" y="374" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="14" font-weight="700" letter-spacing="1.1">HANDOFF</text>
+
+    <rect x="940" y="423" width="310" height="86" fill="#FF5A36"/>
+    <text x="966" y="455" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="700" letter-spacing="2">THE RESULT</text>
+    <text x="966" y="484" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="29" font-weight="800" letter-spacing="0.3">WORK THAT CAN RESUME.</text>
+
+    <text x="782" y="536" fill="#11100E" fill-opacity="0.68" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.2">CONDUCTOR · IMPLEMENTER · REVIEWER · MEMORY · HUMAN OWNER</text>
+
+    <!-- Bottom manifesto strip -->
+    <rect x="58" y="604" width="1318" height="72" fill="#FF5A36"/>
+    <text x="92" y="650" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="27" font-weight="800" letter-spacing="2.6">CONDUCT THE WORK.</text>
+    <circle cx="423" cy="640" r="6" fill="#11100E"/>
+    <text x="453" y="650" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="27" font-weight="800" letter-spacing="2.6">VERIFY THE RESULT.</text>
+    <circle cx="818" cy="640" r="6" fill="#11100E"/>
+    <text x="848" y="650" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="27" font-weight="800" letter-spacing="2.6">LEAVE A TRAIL.</text>
+    <text x="1324" y="648" text-anchor="end" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="13" font-weight="700">MIT / OPEN</text>
+  </g>
+</svg>
