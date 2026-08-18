@@ -14,6 +14,8 @@ Use [`templates/HANDOFF.md`](../../templates/HANDOFF.md) at closeout or whenever
 
 If a durable memory adapter is available, store the same compact handoff there. If not, keep a handoff file or repo note close to the work.
 
+Compact captures compound. Over time, decisions, handoffs, and observations can be assembled into a [project trajectory](project-trajectory.md): where the work has been, where it stands, and the plausible futures ahead of it—including projections an agent records when the path forward genuinely forks.
+
 ## Failure Modes
 
 Transcript dumps are too noisy to use as handoffs and can expose private data. A handoff without a branch or dirty-state summary makes the next session guess where the work lives. A handoff without a next action preserves history but does not support progress. Secrets, tokens, raw logs, and private account data do not belong in a handoff.

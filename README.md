@@ -123,7 +123,7 @@ agentic-workflows/
 2. **Give every agent a lane.** One owner, one bounded slice, one acceptance bar. Parallelism without ownership is just faster confusion.
 3. **Replace confidence with evidence.** A green command, inspected diff, or verified user flow beats a persuasive summary.
 4. **Gate irreversible actions.** Commit, push, deploy, message, and live-write paths should be explicit and fail closed.
-5. **Leave the system better informed.** Record decisions and handoffs—not secrets, raw logs, or entire transcripts.
+5. **Leave the system better informed.** Record decisions, handoffs, and the plausible futures you can see—not secrets, raw logs, or entire transcripts.
 
 ## Read the field manual
 
@@ -133,6 +133,7 @@ agentic-workflows/
 | [Fleet execution](docs/concepts/fleet-execution.md) | [Codex fleet](docs/workflows/codex-fleet.md) |
 | [Living specs](docs/concepts/living-specs.md) | [Claude from Codex](docs/workflows/claude-from-codex.md) |
 | [Handoffs and continuity](docs/concepts/handoffs-and-continuity.md) | [Codex from Claude](docs/workflows/codex-from-claude.md) |
+| [Project trajectory and possible futures](docs/concepts/project-trajectory.md) | [Closeout and handoff](docs/workflows/closeout-and-handoff.md) |
 | [Council review](docs/concepts/council-review.md) | [Workflow diagram gallery](docs/diagrams.md) |
 
 ## A living, public field manual

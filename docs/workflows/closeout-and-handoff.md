@@ -20,13 +20,15 @@ Use this workflow at the end of a branch, round, review session, or interrupted 
 4. Record live-system effects, including services touched, processes restarted, data written, or external calls made.
 5. State what was not done, including skipped tests, deferred scope, unpushed commits, or known limitations.
 6. Write the next useful action as a concrete resume step.
-7. Store the closeout in a durable memory adapter when available, or use [`templates/HANDOFF.md`](../../templates/HANDOFF.md) as the fallback.
+7. If the path forward genuinely forks, record a projection: one to five plausible futures with a short title, a one-line description, a confidence, and the basis that makes them plausible. See [project trajectory](../concepts/project-trajectory.md).
+8. Store the closeout in a durable memory adapter when available, or use [`templates/HANDOFF.md`](../../templates/HANDOFF.md) as the fallback.
 
 ## Outputs
 
 - A branch closeout summary with files changed and verification.
 - A record of live-system effects and what was not done.
 - A compact next action for the next session.
+- A projection of plausible futures when the path forward forks.
 - A durable memory entry or handoff file when work remains.
 
 ## Verification

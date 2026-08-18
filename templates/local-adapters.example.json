@@ -3,7 +3,8 @@
     "kind": "durable-memory-adapter",
     "capture_decision": "your-command capture-decision",
     "capture_handoff": "your-command capture-handoff",
-    "capture_observation": "your-command capture-observation"
+    "capture_observation": "your-command capture-observation",
+    "capture_projection": "your-command capture-projection"
   },
   "notifications": {
     "kind": "notification-adapter",

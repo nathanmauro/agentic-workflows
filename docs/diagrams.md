@@ -65,6 +65,23 @@ flowchart TD
 
 Closeout is not a transcript dump. It is a compact state record that tells the next session where the work lives, what changed, what was proved, and what to do next.
 
+## Project Trajectory And Possible Futures
+
+```mermaid
+flowchart LR
+  DeepPast["Earlier work (collapsed)"] --> BurstA["Burst of activity"]
+  BurstA --> BurstB["Burst of activity"]
+  BurstB --> Head(("Head: latest handoff"))
+  BurstB -.-> Stub["Rejected alternative (stub)"]
+  Head --> NextAction["Next action from handoff"]
+  Head --> OpenLoop["Open loop"]
+  Head --> BlockedTask["Blocked task"]
+  Head -.-> Ghost1["Projection: possible future"]
+  Head -.-> Ghost2["Projection: possible future"]
+```
+
+The trajectory is a view over the same durable captures. Solid futures derive from recorded facts—next actions, open loops, task state. Dashed ghosts are projections: possible futures an agent wrote down at closeout, each with a confidence, superseded by the next projection set. Rejected alternatives stay behind the head as dead stubs.
+
 ## Council Review
 
 ```mermaid
