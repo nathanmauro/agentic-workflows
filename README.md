@@ -136,6 +136,10 @@ agentic-workflows/
 | [Project trajectory and possible futures](docs/concepts/project-trajectory.md) | [Closeout and handoff](docs/workflows/closeout-and-handoff.md) |
 | [Council review](docs/concepts/council-review.md) | [Workflow diagram gallery](docs/diagrams.md) |
 
+## Kindred systems
+
+This manual is one distillation of a discipline other people have reached independently. [Kindred systems](docs/kindred-systems.md) maps the convergences—starting with Matt Pocock's [Skills For Real Engineers](https://github.com/mattpocock/skills), whose session-level skills compose with this manual's between-session workflows and share its vocabulary down to the word "frontier."
+
 ## A living, public field manual
 
 These workflows were distilled from a private local control plane into a curated, public-safe kit. The useful patterns are published; private machine wiring, credentials, account routing, personal context, and raw session data are not. The [private/public boundary](docs/private-public-boundary.md) explains the rule.
