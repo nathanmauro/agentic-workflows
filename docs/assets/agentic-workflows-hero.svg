@@ -1,102 +1,225 @@
-<svg width="1440" height="720" viewBox="0 0 1440 720" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Agentic Workflows</title>
-  <desc id="desc">An editorial field-manual cover showing a workflow from intent through specification, delegation, verification, shipping, and handoff.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="720" viewBox="0 0 1440 720" role="img" aria-labelledby="title description">
+  <title id="title">Agentic Workflows field manual trajectory plate</title>
+  <desc id="description">An aged technical drawing showing a project trajectory from intent through handoff, a doubled NOW node, derived and ghost futures, confidence values, and one rejected path.</desc>
 
   <defs>
-    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
-      <path d="M32 0H0V32" stroke="#EDE7DB" stroke-opacity="0.09" stroke-width="1"/>
+    <pattern id="paper-fiber" width="96" height="72" patternUnits="userSpaceOnUse">
+      <path d="M8 11h17M54 23h9M76 59h12M21 66h5M34 38h22" fill="none" stroke="#7A7264" stroke-width="0.45" opacity="0.13"/>
+      <circle cx="39" cy="15" r="0.65" fill="#2B2925" opacity="0.09"/>
+      <circle cx="71" cy="36" r="0.55" fill="#2B2925" opacity="0.08"/>
+      <circle cx="13" cy="48" r="0.5" fill="#2B2925" opacity="0.08"/>
     </pattern>
-    <pattern id="microGrid" width="12" height="12" patternUnits="userSpaceOnUse">
-      <path d="M12 0H0V12" stroke="#11100E" stroke-opacity="0.1" stroke-width="1"/>
+
+    <pattern id="blue-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#9DB8CC" stroke-width="0.7" opacity="0.22"/>
     </pattern>
-    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000000" flood-opacity="0.28"/>
-    </filter>
-    <clipPath id="canvas">
-      <rect width="1440" height="720" rx="4"/>
-    </clipPath>
+
+    <marker id="ink-arrow" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M1 1l8 4-8 4 2-4z" fill="#2B2925"/>
+    </marker>
+
+    <marker id="blue-arrow" viewBox="0 0 10 10" refX="8.4" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M1 1l8 4-8 4" fill="none" stroke="#9DB8CC" stroke-width="1.4"/>
+    </marker>
+
+    <g id="burst" fill="none" stroke="#2B2925" stroke-linecap="round">
+      <circle r="6" fill="#EFE9DC" stroke-width="1.6"/>
+      <path d="M0-13v-5M9-9l4-4M13 0h6M9 9l4 4M0 13v5M-9 9l-4 4M-13 0h-6M-9-9l-4-4" stroke-width="1.2"/>
+    </g>
+
+    <g id="fact-node">
+      <circle r="7" fill="#EFE9DC" stroke="#2B2925" stroke-width="1.7"/>
+      <circle r="2.2" fill="#2B2925"/>
+    </g>
+
+    <g id="ghost-node" fill="#EFE9DC" stroke="#7A7264" stroke-width="1.4">
+      <circle r="6" stroke-dasharray="3 3"/>
+    </g>
   </defs>
 
-  <g clip-path="url(#canvas)">
-    <rect width="1440" height="720" fill="#11100E"/>
-    <rect width="1440" height="720" fill="url(#grid)"/>
+  <!-- aged plate stock -->
+  <rect width="1440" height="720" fill="#EFE9DC"/>
+  <rect width="1440" height="720" fill="url(#paper-fiber)"/>
 
-    <!-- Registration marks and issue metadata -->
-    <path d="M44 72V44H72M1368 44H1396V72M44 648V676H72M1368 676H1396V648" stroke="#EDE7DB" stroke-opacity="0.4" stroke-width="2"/>
-    <circle cx="58" cy="58" r="4" fill="#CBFF4A"/>
-    <text x="82" y="64" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="17" letter-spacing="2.6">OPEN FIELD MANUAL / 01</text>
-    <text x="1362" y="64" text-anchor="end" fill="#EDE7DB" fill-opacity="0.64" font-family="Menlo, Monaco, monospace" font-size="15" letter-spacing="2">SYSTEMS FOR SHIPPING</text>
+  <!-- double-rule plate border -->
+  <g fill="none" stroke="#2B2925">
+    <rect x="24.5" y="24.5" width="1391" height="671" stroke-width="1"/>
+    <rect x="31.5" y="31.5" width="1377" height="657" stroke-width="0.55" opacity="0.72"/>
+  </g>
+  <path d="M49 106.5h1342M49 618.5h1342" fill="none" stroke="#2B2925" stroke-width="0.8"/>
 
-    <!-- Editorial title block -->
-    <rect x="58" y="112" width="16" height="232" fill="#FF5A36"/>
-    <text x="106" y="207" fill="#EDE7DB" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="112" font-weight="800" letter-spacing="-3">AGENTIC</text>
-    <text x="101" y="318" fill="#EDE7DB" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="112" font-weight="800" letter-spacing="-3">WORKFLOWS</text>
+  <!-- running head -->
+  <g fill="#2B2925">
+    <text x="52" y="69" font-family="American Typewriter, Courier New, monospace" font-size="25" letter-spacing="6">AGENTIC WORKFLOWS</text>
+    <text x="54" y="90" font-family="American Typewriter, Courier New, monospace" font-size="10.5" letter-spacing="1.4" fill="#7A7264">OPEN FIELD MANUAL / PROJECT CONTINUITY</text>
+  </g>
 
-    <line x1="106" y1="351" x2="650" y2="351" stroke="#EDE7DB" stroke-opacity="0.35"/>
-    <text x="106" y="391" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="18" letter-spacing="2.7">THE OPERATING SYSTEM AROUND THE MODEL</text>
-    <text x="106" y="438" fill="#EDE7DB" fill-opacity="0.76" font-family="Avenir Next, Helvetica Neue, sans-serif" font-size="23" font-weight="500">Direct the work. Prove the result.</text>
-    <text x="106" y="472" fill="#EDE7DB" fill-opacity="0.76" font-family="Avenir Next, Helvetica Neue, sans-serif" font-size="23" font-weight="500">Make the next session smarter.</text>
+  <g font-family="American Typewriter, Courier New, monospace" fill="#7A7264" font-size="10" letter-spacing="1">
+    <text x="1133" y="55">PLATE 01</text>
+    <text x="1133" y="73">SHEET 1 OF 1</text>
+    <text x="1133" y="91">SCALE: RELATIONAL</text>
+  </g>
+  <path d="M1113 43v51M1250 43v51M1113 61h278M1113 79h278" fill="none" stroke="#7A7264" stroke-width="0.6" opacity="0.8"/>
+  <text x="1267" y="69" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#7A7264">rev. by use</text>
 
-    <!-- Workflow circuit -->
-    <g filter="url(#softShadow)">
-      <rect x="750" y="112" width="626" height="456" rx="2" fill="#EDE7DB"/>
-    </g>
-    <rect x="750" y="112" width="626" height="456" fill="url(#microGrid)"/>
+  <!-- deliberately visible construction field -->
+  <rect x="71" y="127" width="1297" height="466" fill="url(#blue-grid)" opacity="0.72"/>
+  <g fill="none" stroke="#9DB8CC" stroke-width="1" opacity="0.74">
+    <path d="M94 358H1348" stroke-dasharray="9 6"/>
+    <path d="M746 141V579" stroke-dasharray="5 6"/>
+    <circle cx="746" cy="358" r="69"/>
+    <circle cx="746" cy="358" r="96" stroke-dasharray="4 5"/>
+    <path d="M746 358L1277 205M746 358L1304 281M746 358L1304 358M746 358L1277 474M746 358L1136 552"/>
+    <path d="M1207 196A482 482 0 0 1 1279 470" stroke-dasharray="3 6"/>
+    <path d="M107 157h70M107 157v34M1332 157h-70M1332 157v34M107 565h70M107 565v-34M1332 565h-70M1332 565v-34"/>
+  </g>
 
-    <text x="782" y="151" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="14" font-weight="700" letter-spacing="2.5">THE SHIP LOOP</text>
-    <text x="1344" y="151" text-anchor="end" fill="#11100E" fill-opacity="0.55" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.6">REPEATABLE / INSPECTABLE</text>
+  <!-- upper annotations -->
+  <g font-family="American Typewriter, Courier New, monospace" font-size="10.5" fill="#7A7264" letter-spacing="0.7">
+    <text x="92" y="151">CONSTRUCTION DATUM / DO NOT ERASE</text>
+    <text x="92" y="171">OBSERVED TIME  →</text>
+    <text x="1058" y="151">PROJECTION FIELD</text>
+    <text x="1058" y="171">CERTAINTY DECREASES  →</text>
+  </g>
 
-    <!-- Connector circuit -->
-    <path d="M836 244H941M1044 244H1147M1250 244H1302V357H1250" stroke="#11100E" stroke-width="3"/>
-    <path d="M1147 357H1044M941 357H836V423H1044" stroke="#11100E" stroke-width="3"/>
-    <path d="M1044 423H1250V357" stroke="#11100E" stroke-width="3" stroke-dasharray="8 8"/>
+  <!-- past trajectory: uneven activity spine -->
+  <g fill="none" stroke="#2B2925" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M118 372C162 372 175 350 211 350S265 374 304 369 360 340 401 346 451 383 493 375 546 326 591 337 631 363 684 358L712 358" stroke-width="2.4"/>
+    <path d="M118 377C164 377 177 355 211 355S265 379 305 374 361 345 401 351 450 388 494 380 548 331 592 342 633 368 684 363" stroke-width="0.75" opacity="0.48"/>
+  </g>
 
-    <!-- Arrowheads -->
-    <path d="M931 236L943 244L931 252V236Z" fill="#11100E"/>
-    <path d="M1137 236L1149 244L1137 252V236Z" fill="#11100E"/>
-    <path d="M1260 349L1248 357L1260 365V349Z" fill="#11100E"/>
-    <path d="M1054 349L1042 357L1054 365V349Z" fill="#11100E"/>
-    <path d="M931 349L943 357L931 365V349Z" fill="#11100E"/>
-    <path d="M1240 415L1252 423L1240 431V415Z" fill="#11100E"/>
+  <!-- activity bursts and captured facts -->
+  <g>
+    <use href="#burst" transform="translate(161 364) scale(.82)"/>
+    <use href="#burst" transform="translate(237 359) scale(.72)"/>
+    <use href="#burst" transform="translate(322 362) scale(.9)"/>
+    <use href="#burst" transform="translate(414 354) scale(.76)"/>
+    <use href="#burst" transform="translate(505 365) scale(.92)"/>
+    <use href="#burst" transform="translate(596 341) scale(.78)"/>
+    <use href="#fact-node" transform="translate(118 372)"/>
+    <use href="#fact-node" transform="translate(211 350)"/>
+    <use href="#fact-node" transform="translate(304 369)"/>
+    <use href="#fact-node" transform="translate(401 346)"/>
+    <use href="#fact-node" transform="translate(493 375)"/>
+    <use href="#fact-node" transform="translate(591 337)"/>
+    <use href="#fact-node" transform="translate(684 358)"/>
+  </g>
 
-    <!-- Nodes -->
-    <rect x="782" y="204" width="104" height="80" fill="#11100E"/>
-    <text x="834" y="236" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">01</text>
-    <text x="834" y="261" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="16" font-weight="700" letter-spacing="1.7">INTENT</text>
+  <!-- phase labels, deliberately imperfect baseline -->
+  <g font-family="American Typewriter, Courier New, monospace" font-size="11" fill="#2B2925" letter-spacing="1.3">
+    <text x="98" y="414">INTENT</text>
+    <text x="198" y="397">SPEC</text>
+    <text x="286" y="415">DELEGATE</text>
+    <text x="388" y="394">VERIFY</text>
+    <text x="474" y="421">HAND OFF</text>
+  </g>
+  <g fill="none" stroke="#7A7264" stroke-width="0.8">
+    <path d="M117 402v-21M211 386v-27M305 403v-25M401 383v-28M493 409v-25"/>
+  </g>
 
-    <rect x="940" y="204" width="104" height="80" fill="#FF5A36"/>
-    <text x="992" y="236" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="700" letter-spacing="1.8">02</text>
-    <text x="992" y="261" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="16" font-weight="700" letter-spacing="1.7">SPEC</text>
+  <!-- durable handoff annotation -->
+  <g font-family="American Typewriter, Courier New, monospace" fill="#2B2925">
+    <text x="520" y="446" font-size="10.5" letter-spacing="1">DURABLE HANDOFF, FILED</text>
+    <text x="520" y="460" font-size="9.5" fill="#7A7264">state, not transcript</text>
+  </g>
+  <path d="M613 437l70-66" fill="none" stroke="#7A7264" stroke-width="0.8" marker-end="url(#ink-arrow)"/>
 
-    <rect x="1146" y="204" width="104" height="80" fill="#11100E"/>
-    <text x="1198" y="236" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">03</text>
-    <text x="1198" y="261" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="700" letter-spacing="1.2">DELEGATE</text>
+  <!-- doubled head node / present -->
+  <g transform="translate(746 358)">
+    <circle r="28" fill="#EFE9DC" stroke="#2B2925" stroke-width="2.2"/>
+    <circle r="21" fill="none" stroke="#2B2925" stroke-width="1"/>
+    <circle r="3" fill="#2B2925"/>
+    <path d="M-39 0h10M29 0h10M0-39v10M0 29v10" stroke="#2B2925" stroke-width="1"/>
+    <text x="0" y="-47" text-anchor="middle" font-family="American Typewriter, Courier New, monospace" font-size="12" font-weight="700" letter-spacing="2" fill="#2B2925">NOW</text>
+  </g>
+  <g font-family="American Typewriter, Courier New, monospace" font-size="9.5" fill="#7A7264">
+    <text x="697" y="429">HEAD NODE</text>
+    <text x="697" y="443">RECOMPUTE HERE</text>
+  </g>
+  <path d="M736 418l5-30" fill="none" stroke="#7A7264" stroke-width="0.8" marker-end="url(#ink-arrow)"/>
 
-    <rect x="1146" y="317" width="104" height="80" fill="#CBFF4A"/>
-    <text x="1198" y="349" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="700" letter-spacing="1.8">04</text>
-    <text x="1198" y="374" text-anchor="middle" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="700" letter-spacing="1.2">VERIFY</text>
+  <!-- fan of possible futures -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- fact-derived continuations -->
+    <path d="M774 356C838 350 877 321 925 315 978 309 1019 329 1064 319 1119 307 1161 270 1227 270" stroke="#2B2925" stroke-width="2.1"/>
+    <path d="M774 361C841 369 883 391 934 386 989 381 1020 350 1077 352 1132 354 1185 389 1264 378" stroke="#2B2925" stroke-width="1.8"/>
+    <!-- ghost projections -->
+    <path d="M770 346C825 322 862 276 916 251 984 220 1056 223 1111 204 1161 187 1206 173 1279 179" stroke="#7A7264" stroke-width="1.45" stroke-dasharray="9 7"/>
+    <path d="M771 367C830 392 870 433 921 451 983 472 1035 457 1093 476 1145 493 1195 518 1270 520" stroke="#7A7264" stroke-width="1.45" stroke-dasharray="9 7"/>
+    <path d="M769 352C827 343 864 344 911 353 970 364 1005 411 1059 425 1102 436 1149 429 1199 447" stroke="#7A7264" stroke-width="1.2" stroke-dasharray="4 7"/>
+  </g>
 
-    <rect x="940" y="317" width="104" height="80" fill="#11100E"/>
-    <text x="992" y="349" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">05</text>
-    <text x="992" y="374" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="16" font-weight="700" letter-spacing="1.7">SHIP</text>
+  <!-- future nodes -->
+  <g>
+    <use href="#fact-node" transform="translate(925 315)"/>
+    <use href="#fact-node" transform="translate(1064 319)"/>
+    <use href="#fact-node" transform="translate(1227 270)"/>
+    <use href="#fact-node" transform="translate(934 386)"/>
+    <use href="#fact-node" transform="translate(1077 352)"/>
+    <use href="#fact-node" transform="translate(1264 378)"/>
+    <use href="#ghost-node" transform="translate(916 251)"/>
+    <use href="#ghost-node" transform="translate(1111 204)"/>
+    <use href="#ghost-node" transform="translate(1279 179)"/>
+    <use href="#ghost-node" transform="translate(921 451)"/>
+    <use href="#ghost-node" transform="translate(1093 476)"/>
+    <use href="#ghost-node" transform="translate(1270 520)"/>
+    <use href="#ghost-node" transform="translate(1059 425)"/>
+    <use href="#ghost-node" transform="translate(1199 447)"/>
+  </g>
 
-    <rect x="782" y="317" width="104" height="80" fill="#11100E"/>
-    <text x="834" y="349" text-anchor="middle" fill="#CBFF4A" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.8">06</text>
-    <text x="834" y="374" text-anchor="middle" fill="#EDE7DB" font-family="Menlo, Monaco, monospace" font-size="14" font-weight="700" letter-spacing="1.1">HANDOFF</text>
+  <!-- confidence notations -->
+  <g font-family="American Typewriter, Courier New, monospace" font-size="10.5" fill="#7A7264" letter-spacing="0.7">
+    <text x="946" y="235">GHOST / c=.72</text>
+    <text x="1128" y="192">c=.54</text>
+    <text x="1219" y="165">c=.31</text>
+    <text x="943" y="469">GHOST / c=.46</text>
+    <text x="1108" y="492">c=.27</text>
+    <text x="1211" y="540">c=.12</text>
+    <text x="1042" y="409">c=.38</text>
+  </g>
 
-    <rect x="940" y="423" width="310" height="86" fill="#FF5A36"/>
-    <text x="966" y="455" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="700" letter-spacing="2">THE RESULT</text>
-    <text x="966" y="484" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="29" font-weight="800" letter-spacing="0.3">WORK THAT CAN RESUME.</text>
+  <!-- rejected trajectory / dead stub -->
+  <g fill="none" stroke="#2B2925" stroke-linecap="round">
+    <path d="M847 376C862 407 875 446 900 476 915 494 933 506 951 519" stroke-width="1.7"/>
+    <path d="M942 510l18 18M960 510l-18 18" stroke-width="2"/>
+    <path d="M917 490l-50 44h-76" stroke="#7A7264" stroke-width="0.8" marker-end="url(#ink-arrow)"/>
+  </g>
+  <g font-family="American Typewriter, Courier New, monospace" fill="#2B2925">
+    <text x="780" y="550" font-size="10.5" letter-spacing="1">REJECTED PATH</text>
+    <text x="780" y="564" font-size="9.5" fill="#7A7264">record the reason; keep the stub</text>
+  </g>
 
-    <text x="782" y="536" fill="#11100E" fill-opacity="0.68" font-family="Menlo, Monaco, monospace" font-size="12" letter-spacing="1.2">CONDUCTOR · IMPLEMENTER · REVIEWER · MEMORY · HUMAN OWNER</text>
+  <!-- explanatory callout -->
+  <g transform="translate(952 566)" font-family="American Typewriter, Courier New, monospace">
+    <path d="M0 0h278" fill="none" stroke="#7A7264" stroke-width="0.7"/>
+    <text x="0" y="16" font-size="9.8" fill="#7A7264" letter-spacing="0.35">A GHOST FUTURE IS A USEFUL PROJECTION,</text>
+    <text x="0" y="30" font-size="9.8" fill="#7A7264" letter-spacing="0.35">NOT A CLAIM THAT THE WORK HAS OCCURRED.</text>
+  </g>
 
-    <!-- Bottom manifesto strip -->
-    <rect x="58" y="604" width="1318" height="72" fill="#FF5A36"/>
-    <text x="92" y="650" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="27" font-weight="800" letter-spacing="2.6">CONDUCT THE WORK.</text>
-    <circle cx="423" cy="640" r="6" fill="#11100E"/>
-    <text x="453" y="650" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="27" font-weight="800" letter-spacing="2.6">VERIFY THE RESULT.</text>
-    <circle cx="818" cy="640" r="6" fill="#11100E"/>
-    <text x="848" y="650" fill="#11100E" font-family="Avenir Next Condensed, DIN Condensed, Helvetica Neue, sans-serif" font-size="27" font-weight="800" letter-spacing="2.6">LEAVE A TRAIL.</text>
-    <text x="1324" y="648" text-anchor="end" fill="#11100E" font-family="Menlo, Monaco, monospace" font-size="13" font-weight="700">MIT / OPEN</text>
+  <!-- legend -->
+  <g transform="translate(89 516)" font-family="American Typewriter, Courier New, monospace">
+    <text x="0" y="0" font-size="10" fill="#2B2925" letter-spacing="1.4">LINE KEY</text>
+    <path d="M0 17h42" stroke="#2B2925" stroke-width="1.8"/>
+    <text x="50" y="20" font-size="9.5" fill="#7A7264">captured fact / derived course</text>
+    <path d="M0 34h42" stroke="#7A7264" stroke-width="1.4" stroke-dasharray="7 5"/>
+    <text x="50" y="37" font-size="9.5" fill="#7A7264">ghost projection / confidence noted</text>
+    <path d="M0 51h42" stroke="#9DB8CC" stroke-width="1"/>
+    <text x="50" y="54" font-size="9.5" fill="#7A7264">construction / inference geometry</text>
+  </g>
+
+  <!-- tiny inspection stamp -->
+  <g transform="translate(1296 556) rotate(-7)" fill="none" stroke="#A4432A" opacity="0.92">
+    <circle r="29" stroke-width="1.4"/>
+    <circle r="24" stroke-width="0.7" stroke-dasharray="2 2"/>
+    <text x="0" y="-8" text-anchor="middle" font-family="American Typewriter, Courier New, monospace" font-size="8" font-weight="700" fill="#A4432A" stroke="none" letter-spacing="1">VERIFIED</text>
+    <text x="0" y="6" text-anchor="middle" font-family="American Typewriter, Courier New, monospace" font-size="7" font-weight="700" fill="#A4432A" stroke="none" letter-spacing="0.8">EVIDENCE</text>
+    <text x="0" y="18" text-anchor="middle" font-family="American Typewriter, Courier New, monospace" font-size="6.5" fill="#A4432A" stroke="none" letter-spacing="0.8">ON FILE</text>
+  </g>
+
+  <!-- figure caption and footer note -->
+  <g fill="#2B2925">
+    <text x="54" y="647" font-family="Georgia, serif" font-size="15" letter-spacing="0.35">FIG. 1 — PROJECT TRAJECTORY, WITH PRESENT HEAD AND UNCOMMITTED FUTURES.</text>
+    <text x="54" y="670" font-family="American Typewriter, Courier New, monospace" font-size="9.8" fill="#7A7264" letter-spacing="0.55">PROCEDURE: INTENT → SPEC → DELEGATE → VERIFY → HAND OFF.  PRESERVE THE TRACE; REVISE THE FORECAST.</text>
+    <text x="1385" y="670" text-anchor="end" font-family="American Typewriter, Courier New, monospace" font-size="9.8" fill="#7A7264">AW/FM-01</text>
   </g>
 </svg>
