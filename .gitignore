@@ -1,0 +1,15 @@
+.DS_Store
+.env
+*.log
+node_modules/
+.codex-goals/
+.claude/
+.firecrawl/
+captures/
+queue/
+tmp/
+.audit-denylist.local
+__pycache__/
+.idea/
+.vscode/
+*.iml

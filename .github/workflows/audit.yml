@@ -1,0 +1,21 @@
+name: audit
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ripgrep
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run public audit
+        run: bash scripts/audit-public.sh

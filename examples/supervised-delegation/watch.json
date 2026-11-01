@@ -1,0 +1,19 @@
+{
+  "command": "watch cx-aw-skills-port-165902-t1 --timeout 900",
+  "exit_code": 11,
+  "turn": "cx-aw-skills-port-165902-t1",
+  "agent": "cx-aw-skills-port-165902",
+  "transport": "herdr",
+  "status": "failed",
+  "envelope": {
+    "status": "failed",
+    "summary": "Execution tool unavailable; no edits made and verification could not run."
+  },
+  "message": "No files changed. The execution tool failed to start on four attempts.\n\n- Audit last line: unavailable; audit did not run.\n- `rg` hits: unavailable; search did not run.\n- Uncertain private strings: not assessed; files were inaccessible.\n\nENVELOPE {\"status\":\"failed\",\"summary\":\"Execution tool unavailable; no edits made and verification could not run.\"}",
+  "duration_ms": 437476,
+  "elapsed_seconds": 440.054,
+  "activity_age_seconds": 0.842,
+  "activity_source": "rollout_event_timestamp",
+  "activity_pending": false,
+  "telemetry_errors": []
+}

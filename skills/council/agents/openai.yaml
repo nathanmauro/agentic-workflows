@@ -1,0 +1,4 @@
+interface:
+  display_name: "Council"
+  short_description: "Fan one question to Claude, Codex, and Gemini; cross-review; pick."
+  default_prompt: "Convene the council on this question: "

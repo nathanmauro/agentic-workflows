@@ -1,0 +1,601 @@
+#!/usr/bin/env python3
+"""Reference adapter for the supervised-delegation contract over headless Codex.
+
+Verbs: start, send, watch, stop (plus status and list). See
+docs/concepts/supervised-delegation.md for the contract and the exit-code table.
+
+No model is pinned here. --model, --effort, and --tier fall back to CODEX_MODEL, CODEX_EFFORT,
+and CODEX_TIER; when those are unset too, the Codex client default from the user's own
+configuration applies. Attended delegation uses the fast service tier at high effort;
+unattended fleet rounds use the standard tier at the highest effort.
+"""
+
+import argparse
+import fcntl
+import json
+import os
+import re
+import secrets
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+EXIT_DONE = 0
+EXIT_ERROR = 1
+EXIT_TIMEOUT = 2
+EXIT_GONE = 3
+EXIT_ABORTED = 4
+EXIT_QUESTION = 10
+EXIT_FAILED = 11
+EXIT_ATTENTION = 12
+
+ENVELOPE_EXITS = {"done": EXIT_DONE, "question": EXIT_QUESTION, "failed": EXIT_FAILED}
+SANDBOXES = ("workspace-write", "read-only", "danger-full-access")
+POLL_SECONDS = 0.5
+
+PREAMBLE = """Protocol for this delegated task (applies to this turn and every later turn):
+- End your final reply with exactly ONE line of the form
+  ENVELOPE {"status":"done|question|failed","summary":"...","question":"..."}
+- If something is ambiguous, stop and use status "question" rather than guess.
+- Never wait for interactive input; nobody is watching the terminal.
+- Never run git add, git commit, git stash, git checkout, or git push. The conductor commits.
+
+Task:
+"""
+
+
+class RunnerError(Exception):
+    pass
+
+
+def home_dir():
+    default = Path.home() / ".codex-runner"
+    return Path(os.environ.get("CODEX_RUNNER_HOME", str(default)))
+
+
+def agents_dir():
+    path = home_dir() / "agents"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def turns_dir():
+    path = home_dir() / "turns"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def read_json(path):
+    with open(path, encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+def write_json(path, data):
+    # Write then rename so a concurrent watch never reads a half-written record.
+    # A per-writer temp name keeps two concurrent writers from renaming each other's file.
+    tmp = path.with_name(f".{path.name}.{os.getpid()}.{secrets.token_hex(4)}.tmp")
+    with open(tmp, "w", encoding="utf-8") as handle:
+        json.dump(data, handle, indent=2)
+    os.replace(tmp, path)
+
+
+def emit(data):
+    print(json.dumps(data))
+
+
+def load_agent(name):
+    path = agents_dir() / f"{name}.json"
+    if not path.exists():
+        raise RunnerError(f"unknown agent: {name}")
+    return read_json(path)
+
+
+def save_agent(agent):
+    write_json(agents_dir() / f"{agent['name']}.json", agent)
+
+
+def turn_path(turn, suffix):
+    return turns_dir() / f"{turn}{suffix}"
+
+
+def load_turn(turn):
+    path = turn_path(turn, ".json")
+    if not path.exists():
+        raise RunnerError(f"unknown turn: {turn}")
+    return read_json(path)
+
+
+def pid_alive(pid):
+    if pid is None:
+        return False
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def read_pid(turn):
+    path = turn_path(turn, ".pid")
+    try:
+        return int(path.read_text().strip())
+    except (OSError, ValueError):
+        return None
+
+
+def is_warning_error(message):
+    return re.search(r"under[ -]development", message or "", re.IGNORECASE) is not None
+
+
+def parse_envelope(message):
+    for line in reversed((message or "").splitlines()):
+        stripped = line.strip()
+        if not stripped.startswith("ENVELOPE "):
+            continue
+        try:
+            envelope = json.loads(stripped[len("ENVELOPE ") :])
+        except json.JSONDecodeError:
+            return None
+        return envelope if isinstance(envelope, dict) else None
+    return None
+
+
+def scan_turn(turn):
+    """Read the turn's event log and summarize what the worker has reported so far."""
+    result = {
+        "thread_id": None,
+        "message": None,
+        "terminal": None,
+        "error": None,
+        "fatal_error": False,
+    }
+    path = turn_path(turn, ".jsonl")
+    if not path.exists():
+        return result
+    with open(path, encoding="utf-8", errors="replace") as handle:
+        for line in handle:
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            apply_event(result, event)
+    return result
+
+
+def apply_event(result, event):
+    kind = event.get("type")
+    item = event.get("item") or {}
+
+    if kind == "thread.started":
+        result["thread_id"] = event.get("thread_id")
+    elif kind == "item.completed" and item.get("type") == "agent_message":
+        result["message"] = item.get("text")
+    elif kind == "turn.completed":
+        result["terminal"] = "completed"
+    elif kind == "turn.failed":
+        result["terminal"] = "failed"
+        result["error"] = (event.get("error") or {}).get("message")
+    elif kind == "error" or item.get("type") == "error":
+        # An error item is not terminal: the worker may still be running and finish the turn.
+        message = event.get("message") or item.get("message")
+        if not is_warning_error(message):
+            result["error"] = message
+            if kind == "error":
+                result["fatal_error"] = True
+
+
+def remember_thread(agent_name, thread_id):
+    if not thread_id:
+        return
+    # Compare before locking: every watch poll lands here, and a lock held only to find nothing
+    # changed would make a concurrent send refuse.
+    if load_agent(agent_name).get("thread_id") == thread_id:
+        return
+    # Under the record lock, so a watch cannot overwrite a turn that a send is appending.
+    with lock_agent(agent_name, wait=True):
+        agent = load_agent(agent_name)
+        if agent.get("thread_id") != thread_id:
+            agent["thread_id"] = thread_id
+            save_agent(agent)
+
+
+def activity_age(turn, now):
+    mtimes = []
+    for suffix in (".jsonl", ".log"):
+        path = turn_path(turn, suffix)
+        if path.exists():
+            mtimes.append(path.stat().st_mtime)
+    if not mtimes:
+        return None
+    return round(now - max(mtimes), 1)
+
+
+def terminal_verdict(scan, payload):
+    """Exit code for a turn whose log holds a terminal event, else None. Fills in payload."""
+    if scan["terminal"] == "failed":
+        payload["status"] = "failed"
+        payload["error"] = scan["error"]
+        return EXIT_FAILED
+    if scan["terminal"] == "completed":
+        status = (payload["envelope"] or {}).get("status")
+        if status in ENVELOPE_EXITS:
+            payload["status"] = status
+            return ENVELOPE_EXITS[status]
+        # A completed turn with no envelope broke the protocol; a person should read it.
+        payload["status"] = "attention"
+        payload["reason"] = "turn completed without a valid envelope"
+        return EXIT_ATTENTION
+    return None
+
+
+def observe(turn, idle_seconds, max_seconds):
+    """One snapshot of a turn. Returns (exit code or None while still pending, payload)."""
+    meta = load_turn(turn)
+    scan = scan_turn(turn)
+    remember_thread(meta["agent"], scan["thread_id"])
+
+    now = time.time()
+    envelope = parse_envelope(scan["message"])
+    age = activity_age(turn, now)
+    payload = {
+        "turn": turn,
+        "agent": meta["agent"],
+        "status": "running",
+        "envelope": envelope,
+        "message": scan["message"],
+        "elapsed_seconds": round(now - meta["started_at"], 1),
+        "activity_age_seconds": age,
+    }
+
+    code = terminal_verdict(scan, payload)
+    if code is not None:
+        return code, payload
+
+    worker_alive = pid_alive(read_pid(turn))
+    if not worker_alive:
+        # The worker may have finished the turn and exited after the first read; read the log
+        # again so a completed turn is never reported as gone or as a stream failure.
+        scan = scan_turn(turn)
+        payload["envelope"] = parse_envelope(scan["message"])
+        payload["message"] = scan["message"]
+        code = terminal_verdict(scan, payload)
+        if code is not None:
+            return code, payload
+    if scan["fatal_error"] and not worker_alive:
+        # Only call a fatal stream error a failure once the worker has really exited.
+        payload["status"] = "failed"
+        payload["error"] = scan["error"]
+        return EXIT_FAILED, payload
+    if meta.get("aborted"):
+        payload["status"] = "aborted"
+        return EXIT_ABORTED, payload
+    if not worker_alive:
+        payload["status"] = "gone"
+        return EXIT_GONE, payload
+    if age is not None and age > idle_seconds:
+        payload["status"] = "attention"
+        payload["reason"] = f"no activity for {age}s"
+        return EXIT_ATTENTION, payload
+    if payload["elapsed_seconds"] > max_seconds:
+        payload["status"] = "attention"
+        payload["reason"] = f"turn budget of {max_seconds}s exceeded"
+        return EXIT_ATTENTION, payload
+    return None, payload
+
+
+def turn_is_live(turn):
+    meta = load_turn(turn)
+    if meta.get("aborted"):
+        return False
+    if scan_turn(turn)["terminal"] in ("completed", "failed"):
+        return False
+    return pid_alive(read_pid(turn))
+
+
+def slug(text):
+    cleaned = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return cleaned[:32] or "agent"
+
+
+def claim_agent_name(prefix, attempts=8):
+    """Reserve a fresh agent name by creating its record file exclusively.
+
+    Labels repeat across runs and records are never deleted, so a bare random suffix could
+    silently overwrite an older agent and its turn history.
+    """
+    for _ in range(attempts):
+        name = f"{prefix}-{secrets.token_hex(4)}"
+        try:
+            fd = os.open(agents_dir() / f"{name}.json", os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            continue
+        os.close(fd)
+        return name
+    raise RunnerError(f"could not claim a free agent name for {prefix}")
+
+
+def cmd_start(args):
+    cwd = Path(args.cwd).expanduser().resolve()
+    if not cwd.is_dir():
+        raise RunnerError(f"cwd is not a directory: {cwd}")
+
+    name = claim_agent_name(slug(args.label or cwd.name))
+    agent = {
+        "name": name,
+        "label": args.label,
+        "transport": "exec",
+        "cwd": str(cwd),
+        "model": args.model,
+        "effort": args.effort,
+        "tier": args.tier,
+        "sandbox": args.sandbox,
+        "thread_id": None,
+        "turns": [],
+        "state": "idle",
+        "created_at": time.time(),
+    }
+    save_agent(agent)
+    emit({"name": name, "transport": "exec", "cwd": str(cwd)})
+    return EXIT_DONE
+
+
+def config_flags(agent):
+    flags = []
+    if agent.get("model"):
+        flags += ["-c", f"model={json.dumps(agent['model'])}"]
+    if agent.get("effort"):
+        flags += ["-c", f"model_reasoning_effort={json.dumps(agent['effort'])}"]
+    if agent.get("tier"):
+        flags += ["-c", f"service_tier={json.dumps(agent['tier'])}"]
+    return flags
+
+
+def known_thread(agent):
+    if agent.get("thread_id"):
+        return agent["thread_id"]
+    if not agent["turns"]:
+        return None
+    # The last turn may not have been watched yet; its log still holds the thread id.
+    return scan_turn(agent["turns"][-1])["thread_id"]
+
+
+def build_command(agent, prompt):
+    # Resume needs a thread; a turn that died before thread.started leaves none to resume.
+    thread_id = known_thread(agent)
+    if not thread_id:
+        return [
+            "codex",
+            "exec",
+            "--json",
+            "-s",
+            agent["sandbox"],
+            "-C",
+            agent["cwd"],
+            "--skip-git-repo-check",
+            "-c",
+            "check_for_update_on_startup=false",
+            *config_flags(agent),
+            prompt,
+        ]
+    agent["thread_id"] = thread_id
+    return [
+        "codex",
+        "exec",
+        "resume",
+        thread_id,
+        "--json",
+        "--skip-git-repo-check",
+        "-c",
+        f"sandbox_mode={json.dumps(agent['sandbox'])}",
+        "-c",
+        "check_for_update_on_startup=false",
+        *config_flags(agent),
+        prompt,
+    ]
+
+
+def lock_agent(name, wait=False):
+    """Take the agent's record lock.
+
+    A send fails at once if any writer holds it; every other writer waits its turn.
+    """
+    handle = open(agents_dir() / f"{name}.lock", "w")
+    flags = fcntl.LOCK_EX if wait else fcntl.LOCK_EX | fcntl.LOCK_NB
+    try:
+        fcntl.flock(handle, flags)
+    except BlockingIOError:
+        handle.close()
+        raise RunnerError(f"agent {name} record is locked by another send or writer")
+    return handle
+
+
+def cmd_send(args):
+    # Fail on an unknown name before creating its lock file.
+    load_agent(args.name)
+    # The lock spans the live-turn check through the final save so two sends cannot both
+    # launch a worker for the same turn id.
+    with lock_agent(args.name):
+        return send_locked(args)
+
+
+def send_locked(args):
+    agent = load_agent(args.name)
+    if agent.get("state") == "stopped":
+        raise RunnerError(f"agent {args.name} is stopped")
+    if agent["turns"] and turn_is_live(agent["turns"][-1]):
+        raise RunnerError(f"agent {args.name} still has a live turn: {agent['turns'][-1]}")
+    if args.task != "-":
+        raise RunnerError("send reads the task from stdin; pass '-'")
+
+    task = sys.stdin.read().strip()
+    if not task:
+        raise RunnerError("empty task on stdin")
+
+    command = build_command(agent, PREAMBLE + task)
+    turn = f"{agent['name']}-t{len(agent['turns']) + 1:02d}"
+    with open(turn_path(turn, ".jsonl"), "w") as out, open(turn_path(turn, ".log"), "w") as err:
+        # A new session detaches the worker so it outlives this process and the caller's shell.
+        process = subprocess.Popen(
+            command,
+            cwd=agent["cwd"],
+            stdin=subprocess.DEVNULL,
+            stdout=out,
+            stderr=err,
+            start_new_session=True,
+        )
+    turn_path(turn, ".pid").write_text(f"{process.pid}\n")
+    write_json(
+        turn_path(turn, ".json"),
+        {
+            "turn": turn,
+            "agent": agent["name"],
+            "started_at": time.time(),
+            "aborted": False,
+        },
+    )
+
+    agent["turns"].append(turn)
+    agent["state"] = "active"
+    save_agent(agent)
+    emit({"turn": turn, "agent": agent["name"], "session": agent.get("thread_id")})
+    return EXIT_DONE
+
+
+def cmd_watch(args):
+    deadline = time.time() + args.timeout
+    while True:
+        code, payload = observe(args.turn, args.idle_seconds, args.max_seconds)
+        if code is not None:
+            break
+        remaining = deadline - time.time()
+        if remaining <= 0:
+            payload["status"] = "timeout"
+            code = EXIT_TIMEOUT
+            break
+        time.sleep(min(POLL_SECONDS, remaining))
+    emit(payload)
+    return code
+
+
+def cmd_status(args):
+    agent = load_agent(args.name)
+    last = agent["turns"][-1] if agent["turns"] else None
+    turn_status = None
+    if last:
+        _, payload = observe(last, float("inf"), float("inf"))
+        turn_status = payload["status"]
+    emit({**load_agent(args.name), "last_turn": last, "last_turn_status": turn_status})
+    return EXIT_DONE
+
+
+def cmd_list(args):
+    rows = []
+    for path in sorted(agents_dir().glob("*.json")):
+        try:
+            agent = read_json(path)
+        except json.JSONDecodeError:
+            # A start has claimed this name but not yet written the record.
+            continue
+        rows.append(
+            {
+                "name": agent["name"],
+                "label": agent.get("label"),
+                "cwd": agent["cwd"],
+                "state": agent.get("state"),
+                "turns": len(agent["turns"]),
+            }
+        )
+    emit(rows)
+    return EXIT_DONE
+
+
+def cmd_stop(args):
+    # Fail on an unknown name before creating its lock file.
+    load_agent(args.name)
+    # Pick, kill, and mark under the lock: a send in flight then either lands its turn first,
+    # so this stop kills it, or finds the agent stopped and refuses.
+    with lock_agent(args.name, wait=True):
+        return stop_locked(args)
+
+
+def stop_locked(args):
+    agent = load_agent(args.name)
+    killed = None
+    if agent["turns"]:
+        turn = agent["turns"][-1]
+        pid = read_pid(turn)
+        if turn_is_live(turn):
+            # The worker leads its own process group, so this also reaches its tool children.
+            try:
+                os.killpg(pid, signal.SIGTERM)
+                killed = pid
+            except ProcessLookupError:
+                # The worker exited after the live check; still record the abort below.
+                pass
+        meta = load_turn(turn)
+        meta["aborted"] = True
+        write_json(turn_path(turn, ".json"), meta)
+    agent["state"] = "stopped"
+    save_agent(agent)
+    emit({"name": agent["name"], "state": "stopped", "killed_pid": killed})
+    return EXIT_DONE
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(prog="codex-runner", description=__doc__.splitlines()[0])
+    sub = parser.add_subparsers(dest="verb", required=True)
+
+    start = sub.add_parser("start", help="create an agent record")
+    start.add_argument("--cwd", required=True)
+    start.add_argument("--label")
+    # No default model: unset means the Codex client default applies.
+    start.add_argument("--model", default=os.environ.get("CODEX_MODEL"))
+    start.add_argument("--effort", default=os.environ.get("CODEX_EFFORT"))
+    start.add_argument("--tier", default=os.environ.get("CODEX_TIER"), help="service tier")
+    start.add_argument("--sandbox", choices=SANDBOXES, default="workspace-write")
+    start.set_defaults(func=cmd_start)
+
+    send = sub.add_parser("send", help="launch a detached turn with the task from stdin")
+    send.add_argument("name")
+    send.add_argument("task", help="must be '-' (task is read from stdin)")
+    send.set_defaults(func=cmd_send)
+
+    watch = sub.add_parser("watch", help="observe one turn for up to --timeout seconds")
+    watch.add_argument("turn")
+    watch.add_argument("--timeout", type=float, required=True)
+    watch.add_argument("--idle-seconds", type=float, default=600)
+    watch.add_argument("--max-seconds", type=float, default=2700)
+    watch.set_defaults(func=cmd_watch)
+
+    status = sub.add_parser("status", help="show an agent and its last turn")
+    status.add_argument("name")
+    status.set_defaults(func=cmd_status)
+
+    listing = sub.add_parser("list", help="list agents")
+    listing.set_defaults(func=cmd_list)
+
+    stop = sub.add_parser("stop", help="terminate the live turn and stop the agent")
+    stop.add_argument("name")
+    stop.set_defaults(func=cmd_stop)
+    return parser
+
+
+def main():
+    try:
+        args = build_parser().parse_args()
+    except SystemExit as exc:
+        # argparse exits 2 on bad usage, which would read as an observation timeout.
+        return EXIT_ERROR if exc.code else EXIT_DONE
+    try:
+        return args.func(args)
+    except (RunnerError, OSError) as exc:
+        print(json.dumps({"error": str(exc)}), file=sys.stderr)
+        return EXIT_ERROR
+
+
+if __name__ == "__main__":
+    sys.exit(main())

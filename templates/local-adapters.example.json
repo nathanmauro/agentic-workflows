@@ -1,0 +1,35 @@
+{
+  "memory": {
+    "kind": "durable-memory-adapter",
+    "capture_decision": "your-command capture-decision",
+    "capture_handoff": "your-command capture-handoff",
+    "capture_observation": "your-command capture-observation",
+    "capture_projection": "your-command capture-projection",
+    "recall_context": "your-command recall --project <name>",
+    "search_context": "your-command search <query>"
+  },
+  "notifications": {
+    "kind": "notification-adapter",
+    "send": "your-command notify"
+  },
+  "sessions": {
+    "kind": "session-launcher-adapter",
+    "launch_claude": "your-command launch-claude",
+    "launch_codex": "your-command launch-codex"
+  },
+  "worker": {
+    "kind": "supervised-worker-adapter",
+    "contract": "docs/concepts/supervised-delegation.md",
+    "reference": "scripts/codex-runner",
+    "start": "your-command start --cwd <checkout> --label <task> --effort high --tier fast",
+    "send": "your-command send <name> - < task.md",
+    "watch": "your-command watch <turn> --timeout 60",
+    "stop": "your-command stop <name>"
+  },
+  "policy": {
+    "kind": "portable-policy-adapter",
+    "source": "agents/shared/portable-policy.md",
+    "check": "your-command policy check",
+    "render": "your-command policy render"
+  }
+}

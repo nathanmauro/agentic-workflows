@@ -1,0 +1,8 @@
+[
+  {
+    "name": "example-app",
+    "path": "/absolute/path/to/example-app",
+    "hint": "do not push until reviewed.",
+    "tier": "production"
+  }
+]

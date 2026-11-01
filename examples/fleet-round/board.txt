@@ -1,0 +1,4 @@
+PROJECT          | PLANNED      | DOING        | REVIEW       | DONE         | BLOCKED
+-----------------+--------------+--------------+--------------+--------------+-------------
+example-api      |              |              | R1 health-ch |              |
+example-ui       |              |              | R1 onboarding|              |
