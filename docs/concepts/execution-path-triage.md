@@ -28,27 +28,36 @@ would prevent. It asks two questions, in order, and the human picks the answer.
 Match the task to the discipline that fits where it is in its life. Work that is already
 specified, or is not engineering work, matches nothing and goes straight to the engine question.
 
-| Situation                                      | Discipline                                     |
-| ---------------------------------------------- | ---------------------------------------------- |
-| Fuzzy idea                                     | An interview that grills the plan              |
-| Design question that needs something runnable  | A throwaway prototype                          |
-| Multi-session build                            | A spec, then agent-ready tickets               |
-| Something broken, failing, or slow             | A diagnosis loop                               |
-| Concrete behavior to build test-first          | Test-driven development                        |
-| Module shape, or where a seam goes             | Module design                                  |
-| Fuzzy terminology, or a decision worth keeping | Domain modeling and a decision record          |
-| A merge, rebase, or cherry-pick stopped        | Conflict resolution from hunks, not full files |
+| Situation                                          | Discipline                                     |
+| -------------------------------------------------- | ---------------------------------------------- |
+| Fuzzy idea                                         | An interview that grills the plan              |
+| Design question that needs something runnable      | A throwaway prototype                          |
+| Multi-session build                                | A spec, then agent-ready tickets               |
+| Something broken, failing, or slow                 | A diagnosis loop                               |
+| Concrete behavior to build test-first              | Test-driven development                        |
+| Module shape, or where a seam goes                 | Module design                                  |
+| Fuzzy terminology, or a decision worth keeping     | Domain modeling and a decision record          |
+| First-principles derivation, strategy, or red-team | A stateless specialist oracle query            |
+| A merge, rebase, or cherry-pick stopped            | Conflict resolution from hunks, not full files |
 
 ### Question 2: Which engine?
 
-| Signal in the task                                            | Engine          |
-| ------------------------------------------------------------- | --------------- |
-| A question or conversation, no tools needed                   | just-answer     |
-| Multi-source research, no code change                         | research        |
-| Needs read-only investigation, then a plan the human approves | plan first      |
-| Well-specified single-surface change, a small ticket          | direct build    |
-| Multi-file build across disjoint surfaces                     | delegated build |
-| A finished diff                                               | review          |
+| Signal in the task                                                      | Engine           |
+| ----------------------------------------------------------------------- | ---------------- |
+| A question or conversation, no tools needed                             | just-answer      |
+| Hard math/physics derivation, mechanism design, or adversarial critique | stateless oracle |
+| Multi-source research, no code change                                   | research         |
+| Needs read-only investigation, then a plan the human approves           | plan first       |
+| Well-specified single-surface change, a small ticket                    | direct build     |
+| Multi-file build across disjoint surfaces                               | delegated build  |
+| A finished diff                                                         | review           |
+
+A stateless oracle query invokes a deep-reasoning specialist model in a zero-tool, single-turn
+window with only the relevant context slices attached. Stripping tool and MCP schemas plus
+compliance boilerplate avoids re-billing 100k+ context tokens on every shell call and keeps the
+specialist focused on exact derivations, variable bounds, and falsifiable tests rather than
+hedging. Use a [council](council-review.md) instead when independent disagreement across providers
+is worth the extra cost.
 
 A delegated build means the configured Codex model implements over a
 [supervised channel](supervised-delegation.md) and a model that did not write the code verifies
@@ -109,6 +118,7 @@ tool. It was derived from an audit of actual agent sessions, not written in adva
 | ------------------------------- | -------------------------------- | -------------------------- |
 | Recurring check while working   | A session-scoped loop            | Polling by hand            |
 | Recurring job, no live steering | A scheduled routine              | Doing it when remembered   |
+| Hard derivation or red-team     | A stateless zero-tool oracle     | Running a 2x model on bash |
 | Answer spread across many files | An explore subagent              | Reading them all inline    |
 | Build with independent parts    | Orchestrated delegated builds    | One long serial session    |
 | Parallel agents that edit files | Separate worktrees, or serialize | Two writers, one tree      |
@@ -143,7 +153,7 @@ the tool off the active surface. A row nobody uses is noise that every agent sti
 
 ## Work Modes
 
-Triage picks the path; the work mode picks the ceremony around it. There are two, selected per
+Triage picks the path; the work mode picks the ceremony around it. There are three, selected per
 task and carried into handoffs, compaction summaries, and delegate prompts.
 
 - **Prototype** (the default): work autonomously through the smallest useful end-to-end slice,
@@ -152,8 +162,24 @@ task and carried into handoffs, compaction summaries, and delegate prompts.
 - **SDLC**: make the plan and acceptance criteria reviewable before implementation, implement in
   verifiable slices, have a fresh reviewer assess the actual diff, then present the result for a
   delivery checkpoint. A general wish to move fast is not approval of an unseen result.
+- **Explore**: keep code repositories read-only while synthesizing from first principles (physics,
+  strategy, architecture). Parameterize unmeasured inputs explicitly with bounds and falsifiable
+  bench tests rather than hedging or scaffolding unasked repos, services, or dashboards. Distill
+  conclusions into durable notes and decision records, and switch to `prototype` or `sdlc` only
+  when an idea is explicitly promoted to a build.
 
-Neither mode grants permissions, waives required checks, or relaxes the
+### Anti-rabbit-hole gate and queue backpressure
+
+Two guardrails keep autonomous momentum from turning into unreviewed inventory:
+
+- **Anti-rabbit-hole gate.** When a side-quest or new tool idea surfaces mid-task, present a
+  two-option gate (park to the backlog and finish the current objective first, or promote to an
+  active slice now) instead of immediately building the tangent.
+- **Queue backpressure.** Unattended background pipelines carry an explicit ready-backlog ceiling.
+  When prepared items awaiting human review or submission reach the ceiling, background generation
+  pauses automatically while high-priority inbound responses and explicit human picks stay live.
+
+None of the modes grant permissions, waive required checks, or relax the
 [shared operating policy](one-policy-two-engines.md). The fleet's PLAN mode is the same idea as
 the SDLC plan gate, applied per project; see [Fleet Execution](fleet-execution.md).
 

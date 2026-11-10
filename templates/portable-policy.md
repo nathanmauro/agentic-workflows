@@ -27,7 +27,9 @@ nearest project guide override this when they are more specific.
 - The human owner is sole author on every commit, PR, and merge. No model co-authorship or
   generated-by lines.
 - A complete, verified unit may be committed proactively (stage exact paths, preserve unrelated
-  dirty work) and pushed to the branch's existing upstream after inspecting the outgoing range.
+  dirty work) and pushed fast-forward only to the branch's existing upstream after inspecting the
+  outgoing range. Commit, then stop before pushing when the repository is public, the branch has no
+  upstream, or the push is not a fast-forward, and state which.
 - Creating or changing remotes or upstreams, publishing branches, PRs, merges, force-push, history
   repair, external messages, purchases, and access changes require explicit direction.
 - Concurrent writers never share a checkout: separate worktrees, or serialize. The coordinator
@@ -50,13 +52,28 @@ nearest project guide override this when they are more specific.
 - The issue tracker owns execution: issues, priorities, status. Reconcile before creating. Log
   meaningful finished work that had no issue as a done issue labeled `retroactive`.
 - The notes vault owns durable knowledge and unselected ideas. Link notes by stable URI, never by
-  a machine-specific path.
-- The durable memory adapter owns agent evidence: one decision per capture, alternatives with
-  rejection reasons, a handoff breadcrumb (repo, branch, SHA, verification, next action) whenever a
-  project is left in a new state.
+  a machine-specific path. When agent instructions, skills, hooks, or automation behavior change,
+  update the system changelog and run the downstream drift check across every affected surface.
+- The durable memory adapter owns agent evidence: one decision per capture with rejected
+  alternatives and reasons, and a handoff breadcrumb (repo, branch, SHA, verification, next action)
+  whenever stopping with open work, dirty state, rejected paths, or live-system effects that git
+  history alone would lose.
 
 ### Iteration mode
 
-Default to the prototype workflow: end-to-end slices, verify through use, concise progress
-updates. Select the SDLC workflow when the task needs plan and review checkpoints. Pass the
-selection to delegates.
+- Default to the `prototype` workflow: end-to-end slices, verify through use, concise progress
+  updates. Select `sdlc` when the task needs plan and review checkpoints. Select `explore` to keep
+  repositories read-only for first-principles synthesis (physics, strategy, architecture) while
+  parameterizing unknowns explicitly with bounds and falsifiable tests instead of hedging or
+  scaffolding unasked code. Pass the selected mode to delegates.
+- Anti-rabbit-hole gate: when a side-quest or tool idea surfaces mid-task, recommend parking it to
+  the backlog first rather than spawning an unasked build loop.
+
+### Learning
+
+- Codebase-specific insights go out of band to the notes sink, never into the reply or code, and
+  only when the work turns on something non-obvious about this codebase: why a seam sits where it
+  does, what a tradeoff buys, and which file or line controls the behavior.
+- Hands-on teaching mode is opt-in per session on explicit request: inline insights are shown and
+  the one load-bearing 2-10 line design decision is left as a single human placeholder with context
+  and tradeoffs. Outside that mode, never stop on a placeholder; complete the work.

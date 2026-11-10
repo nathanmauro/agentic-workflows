@@ -5,6 +5,42 @@ All notable changes to this repo are recorded here. The format follows
 Entries before 2026-10-31 were backfilled from the git history. On 2026-11-01 the history was
 squashed into a single sanitized root commit, so this file is now the change record.
 
+## 2026-11-10
+
+November stack refresh: stateless specialist routing, `herdr-core` session placement, read-only
+`explore` mode, queue backpressure, and zero-model handoff summary reuse.
+
+### Added
+
+- Stateless specialist oracle stage and engine path in
+  [`docs/concepts/execution-path-triage.md`](docs/concepts/execution-path-triage.md),
+  [`docs/workflows/codex-led-session.md`](docs/workflows/codex-led-session.md), and
+  [`docs/diagrams.md`](docs/diagrams.md): strip tool/MCP schemas and session boilerplate when
+  querying a 2x-cost deep-reasoning specialist for physics/math derivations, mechanism design, or
+  adversarial red-teaming.
+- `explore` work mode, an anti-rabbit-hole gate for mid-task tangents, queue backpressure caps for
+  unattended background pipelines, and out-of-band learning capture in
+  [`templates/portable-policy.md`](templates/portable-policy.md) and
+  [`docs/concepts/execution-path-triage.md`](docs/concepts/execution-path-triage.md).
+- Multi-ring downstream drift verification and MCP/skill startup pruning guidance in
+  [`docs/concepts/one-policy-two-engines.md`](docs/concepts/one-policy-two-engines.md).
+- Read-to-write handoff discipline and zero-model summary reuse (reusing a standing closeout
+  handoff directly as the session summary in Black Box) in
+  [`docs/concepts/handoffs-and-continuity.md`](docs/concepts/handoffs-and-continuity.md).
+
+### Changed
+
+- [`README.md`](README.md) stack block updated for November 2026: interactive session drivers at
+  `medium` effort by default, dedicated fast/standard tiers for delegated and fleet builds, the
+  2x-cost specialist isolated behind a stateless zero-tool oracle CLI rather than used as a
+  multi-turn bash driver, and Gemini included under the shared rendered policy.
+- [`skills/claude-remote/SKILL.md`](skills/claude-remote/SKILL.md) and
+  [`docs/workflows/claude-from-codex.md`](docs/workflows/claude-from-codex.md) migrated from the
+  retired single-binary `herdr` subcommands to `herdr-app` (`tab.new` / `space.new`) plus `hc`
+  (`herdr-core` `get` / `read` / `send` / `run --bg`).
+- [`skills/claude-remote/scripts/start-claude-remote`](skills/claude-remote/scripts/start-claude-remote)
+  accepts `--effort` / `CLAUDE_EFFORT` (defaulting to `medium` instead of hardcoded `max`).
+
 ## 2026-11-01
 
 A full audit of the October refresh, every finding adversarially verified before it was fixed.

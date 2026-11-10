@@ -58,15 +58,19 @@ clients.
 ### Work
 
 4. `$route` is the triage gate, run in the main loop before any non-trivial task. It picks which
-   stage skill fits, then which engine runs it: just answer, research, plan first, direct build,
-   delegated build, or review. It presents ranked options, always including "print the command,
-   don't run it", and the human owner picks. The gate exists because defaulting to the heaviest
-   path is expensive: one such run burned about 11.75M tokens across 317 agents and produced no
-   diff.
-5. `$work-mode` selects prototype (end-to-end slices, verified through real use) or SDLC (plan and
-   review checkpoints). The selection is passed to every delegate.
-6. For a contested decision where being wrong costs more than an hour, `$council` runs independent
-   opinions, anonymized cross-review, and a neutral synthesis
+   stage skill fits, then which engine runs it: just answer, stateless oracle, research, plan
+   first, direct build, delegated build, or review. It presents ranked options, always including
+   "print the command, don't run it", and the human owner picks. The gate exists because defaulting
+   to the heaviest path is expensive: one such run burned about 11.75M tokens across 317 agents and
+   produced no diff.
+5. `$work-mode` selects `prototype` (end-to-end slices, verified through real use), `sdlc` (plan
+   and review checkpoints), or `explore` (read-only repositories for first-principles synthesis,
+   explicit variable bounds, and an anti-rabbit-hole gate that parks mid-task tangents to the
+   backlog). The selection is passed to every delegate.
+6. For a first-principles math/physics derivation, mechanism design question, or single-pass
+   adversarial critique, invoke the stateless zero-tool oracle CLI with the relevant files attached.
+   For a contested decision where independent disagreement across providers costs less than being
+   wrong, `$council` runs independent opinions, anonymized cross-review, and a neutral synthesis
    (see [Council review](../concepts/council-review.md)).
 7. For a bounded review, plan, or second opinion from the other model, Codex starts Claude in a
    managed pane with the `claude-remote` skill and carries the authorization record

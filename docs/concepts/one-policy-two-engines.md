@@ -46,6 +46,14 @@ that was not rendered, or a hand edit to a rendered block, fails loudly. Install
 symlink from one tracked source, never by copying, so an improvement made while working in one
 client is immediately live in the other.
 
+Treat the hash check as ring one of a broader downstream audit whenever agent instructions, skills,
+hooks, or model defaults change. Before closing a control-plane change, verify every ring that can
+drift: rendered policy hashes across every active client (Claude Code, Codex, Gemini), skill
+symlinks and registry entries, CLI links on `PATH`, client hook and effort configs, cross-repo
+playbooks, the system changelog, and a recorded decision in the durable memory adapter. Audit and
+prune unused global MCP servers and zero-use skills on a regular cadence so inactive tools stop
+taxing every turn's startup context.
+
 Keep a registry entry for each skill: owner or upstream, pinned provenance, what it can reach
 (credentials, external writes, subprocesses), its trigger boundary with positive and negative
 examples, validation evidence, last meaningful use, and status. An install is not validation.
