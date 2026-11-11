@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="#current-stack-as-of-october-2026"><strong>Current stack</strong></a>
+  <a href="#current-stack-as-of-november-2026"><strong>Current stack</strong></a>
   ·
   <a href="#pick-your-workflow">Pick a workflow</a>
   ·
@@ -36,23 +36,24 @@ Coding agents rarely fail because they cannot produce a plausible diff. They fai
 
 This repo is the control layer I run around two agents. It is process, not product: the systems these patterns write to live in their own repos, starting with [Black Box](https://github.com/nathanmauro/black-box), the shared memory both agents record decisions and handoffs into. It was built with the workflows it documents. Claude Code and Codex draft and verify; I scope, review, and own every commit.
 
-## Current stack (as of October 2026)
+## Current stack (as of November 2026)
 
-- **Two engines, one policy.** Claude Code (default model: Fable) orchestrates, reviews, and synthesizes. Codex (gpt-6.1-sol on the fast tier at high reasoning effort for delegated builds) does the well-specified implementation. The model that did not write the code verifies it. One [shared operating policy](templates/portable-policy.md) governs both: Claude Code imports it, Codex carries it as a hash-marked rendered block, and a check fails when the rendered block drifts from the source or the import goes missing.
-- **Either engine can lead.** Codex starts Claude sessions in a [Herdr](https://herdr.dev) pane with Remote Control on, carrying the human's authorization with the task. Claude hands Codex bounded turns over a [supervised channel](docs/concepts/supervised-delegation.md): a turn record per send, a one-line result envelope, and an exit code the conductor acts on instead of guessing from silence.
-- **Where state lives.** Interactive sessions run in Herdr workspaces, one per checkout, agents as tabs; unattended fleet workers run in run-scoped tmux sessions. Linear holds execution. Obsidian holds durable notes. Black Box holds decisions, handoffs, and projections for both agents over MCP.
-- **Cost rule for Codex.** Attended delegation, where a conductor is waiting, runs on the fast tier at high effort. Unattended fleet rounds run on the standard tier at xhigh.
+- **Two session engines, one policy, and a stateless specialist oracle.** Claude Code (**Opus 5.5** at `medium` effort by default, `high` when needed; **Sonnet 5.5 / Haiku 5.5** for mechanical lookups and edits) and Codex (**gpt-6-astra** at `medium` effort interactively; **gpt-6.1-sol** for delegated builds) conduct, implement, and cross-verify. The model that did not write the code verifies it. **Fable 5.2** is queried as a stateless, zero-tool First-Principles Oracle (`physics`, `strategy`, `architecture`, `redteam`) rather than an interactive session driver: stripping tool/MCP schemas and compliance boilerplate cuts its quota burn by ~80% and stops it from hedging on unmeasured parameters. One [shared operating policy](templates/portable-policy.md) governs every client: Claude Code imports it, Codex and Gemini carry it as a hash-marked rendered block, and a multi-ring drift check fails when policy hashes, skill symlinks, hooks, docs, or decision records fall out of sync.
+- **Either engine can lead.** Interactive sessions run as spaces and tabs in [Herdr](https://herdr.dev) (`herdr-app` for window placement, `hc` for terminal lifecycle and inspection) with Remote Control on, carrying the human's authorization with the task. Claude hands Codex bounded turns over a [supervised channel](docs/concepts/supervised-delegation.md): a turn record per send, a one-line result envelope, and an exit code the conductor acts on instead of guessing from silence.
+- **Where state lives.** Interactive sessions run in Herdr spaces, one per checkout, agents as tabs; unattended fleet workers run in run-scoped tmux sessions. Linear holds execution. Obsidian holds durable notes and parked ideas. [Black Box](https://github.com/nathanmauro/black-box) holds decisions, handoffs, and projections across clients over MCP.
+- **Cost, startup hygiene, and backpressure.** Interactive drivers default to `medium` effort; attended Codex delegation runs on the fast tier at `high` effort; unattended fleet rounds run on the standard tier at `xhigh`. Unused global MCP servers and zero-use skills are pruned on a regular audit cadence to save thousands of prompt tokens per turn, and autonomous background queues carry explicit ready-backlog caps so agent output never outruns human review.
 
-Last reviewed 2026-10-31.
+Last reviewed 2026-11-10.
 
 ## What it demonstrates
 
 - **Supervised delegation.** A worker channel with send/watch separation, a result envelope, bounded attention, and a sandbox that keeps `.git` read-only so the human stays sole author. [Concept](docs/concepts/supervised-delegation.md) · [public adapter](scripts/codex-runner) · [skill](skills/codex-workflow-hybrid/SKILL.md)
+- **Stateless specialist isolation.** Separating multi-turn tool orchestration from zero-tool first-principles reasoning (`explore` mode and stateless oracle calls), so deep derivations and adversarial red-teams do not re-bill 100k+ tokens of tool schemas per command. [Concept](docs/concepts/execution-path-triage.md)
 - **Consent that survives handoffs.** The human's exact words, their source, the destination, the payload, and the limits travel with every delegated task to the final reviewed tool call. [Concept](docs/concepts/authorization-provenance.md)
-- **Policy as code.** One policy source, one skill source, imported by Claude Code and rendered into Codex as a hash-marked block, with a check mode that fails on drift (the renderer stays private; the concept shows the block format and the check contract). [Concept](docs/concepts/one-policy-two-engines.md) · [template](templates/portable-policy.md) · [skill registry](templates/skill-registry.md)
-- **Fail-closed release gates.** A fleet that can merge its own green PRs only through a helper that checks mode, round, repo identity, PR head, and danger hints, waits on CI, then re-checks every gate after CI and again after a write-ahead state immediately before merge, with fixture tests. [Skill](skills/codex-fleet/SKILL.md) · [workflow](docs/workflows/codex-fleet.md)
-- **Continuity that compounds.** Compact handoffs, typed decisions with rejected alternatives, and projections that assemble into a project trajectory. [Concept](docs/concepts/handoffs-and-continuity.md) · [trajectory](docs/concepts/project-trajectory.md)
-- **Choosing the lean path.** A triage gate that picks the stage and the engine before anything heavy runs, after one default-to-heavy run burned millions of tokens for no diff. [Concept](docs/concepts/execution-path-triage.md)
+- **Policy as code.** One policy source, one skill source, imported by Claude Code and rendered into Codex and Gemini as hash-marked blocks, backed by a multi-ring drift audit across policy, skill links, hooks, docs, and continuity records. [Concept](docs/concepts/one-policy-two-engines.md) · [template](templates/portable-policy.md) · [skill registry](templates/skill-registry.md)
+- **Fail-closed release gates and queue backpressure.** A fleet that merges its own green PRs only through a helper that re-checks mode, round, repo identity, PR head, and danger hints before and after CI, plus backlog caps that pause unattended generation when unreviewed output piles up. [Skill](skills/codex-fleet/SKILL.md) · [workflow](docs/workflows/codex-fleet.md)
+- **Continuity that compounds without write-only bloat.** Compact handoffs written when state would be lost by `git log` alone, typed decisions with rejected alternatives, closeout handoffs reused directly as session summaries without an extra model call, and projections that assemble into a project trajectory. [Concept](docs/concepts/handoffs-and-continuity.md) · [trajectory](docs/concepts/project-trajectory.md)
+- **Choosing the lean path.** A main-loop triage gate and an anti-rabbit-hole gate that pick the stage, engine, and work mode (`prototype`, `sdlc`, or read-only `explore`) before anything heavy runs, after one default-to-heavy run burned 11.75M tokens for no diff. [Concept](docs/concepts/execution-path-triage.md)
 
 ## See one run
 
@@ -193,5 +194,5 @@ The kit is opinionated and will keep changing when my practice does. Copy what h
 
 <p align="center">
   <strong>Conduct the work. Verify the result. Leave a trail.</strong><br>
-  <sub>MIT licensed · built for adaptation · last reviewed 2026-10-31</sub>
+  <sub>MIT licensed · built for adaptation · last reviewed 2026-11-10</sub>
 </p>

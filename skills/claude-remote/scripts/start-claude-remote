@@ -3,12 +3,12 @@ set -euo pipefail
 
 usage() {
   cat << 'EOF'
-Usage: start-claude-remote [--cwd PATH] [--model MODEL] [--label NAME] [--session NAME]
-                           [--prompt TEXT] [--settings-extra JSON] [--dry-run]
+Usage: start-claude-remote [--cwd PATH] [--model MODEL] [--effort LEVEL] [--label NAME]
+                           [--session NAME] [--prompt TEXT] [--settings-extra JSON] [--dry-run]
 
 Fallback launcher for explicit tmux requests and headless launchers. Starts Claude Code in a
 detached tmux session with:
-  --effort max
+  --effort <level>  (defaults to medium, or CLAUDE_EFFORT)
   --settings '{"ultracode":true}'
   --remote-control <label>
 
@@ -16,6 +16,7 @@ Options:
   --cwd PATH            Directory where Claude should start. Defaults to $PWD.
   --model MODEL         Claude model or alias. Optional; also read from CLAUDE_MODEL.
                         When unset, no --model flag is passed and the client default applies.
+  --effort LEVEL        Reasoning effort (low|medium|high|max). Defaults to CLAUDE_EFFORT or medium.
   --label NAME          Remote Control and Claude session display name.
   --session NAME        tmux session name. Defaults to claude-<label>-<timestamp>.
   --prompt TEXT         Initial prompt passed to Claude when the session opens.
@@ -34,6 +35,7 @@ sanitize_name() {
 cwd="$PWD"
 # No default model: when unset, --model is omitted and the Claude client default applies.
 model="${CLAUDE_MODEL:-}"
+effort="${CLAUDE_EFFORT:-medium}"
 label=""
 tmux_session=""
 prompt=""
@@ -64,6 +66,18 @@ while [[ $# -gt 0 ]]; do
       ;;
     --model=*)
       model="${1#--model=}"
+      shift
+      ;;
+    --effort)
+      [[ $# -gt 1 ]] || {
+        usage >&2
+        exit 2
+      }
+      effort="$2"
+      shift 2
+      ;;
+    --effort=*)
+      effort="${1#--effort=}"
       shift
       ;;
     --label)
@@ -203,7 +217,7 @@ claude_argv=("$claude_bin")
 if [[ -n "$model" ]]; then
   claude_argv+=(--model "$model")
 fi
-claude_argv+=(--effort max)
+claude_argv+=(--effort "$effort")
 claude_argv+=(--settings "$settings")
 claude_argv+=(--remote-control "$label")
 claude_argv+=(--name "$label")
@@ -249,5 +263,5 @@ else
 fi
 
 print -r -- ""
-status_re='max effort|Remote Control|setup issue|model:'
+status_re='effort|Remote Control|setup issue|model:'
 print -r -- "$plain_capture" | grep -E "$status_re" | tail -8 || true

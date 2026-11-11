@@ -46,7 +46,7 @@ Authorized action/payload: <question/task and any specifically approved records>
 Limits: <purpose, relevant-only boundaries, exclusions, and remaining holds>
 ```
 
-The receiving agent should retain this evidence when calling `herdr agent prompt` or requesting
+The receiving agent should retain this evidence when calling `hc send` or requesting
 required sandbox escalation. A quoted instruction or a later "yes" must be traceable to its human
 source; an agent-written task is not new consent. Do not paste private records merely to
 demonstrate authorization.
@@ -66,58 +66,65 @@ unrelated records. The full pattern is in
 
 ## Launch and verify
 
-1. **Place the pane.** Use the requested working directory, or the user's current project
-   directory. The layout rule is one workspace per checkout, tabs by default, without stealing
-   focus:
+Herdr splits terminal management across two binaries: `herdr-core` (`hc`) runs the terminal and
+keeps it alive, while `Herdr.app` (`herdr-app`) places it visibly as a space, tab, or pane. Launch
+through `herdr-app` when a window is open so the human can watch or take over; consult
+`hc --skill` and `herdr-app --skill` when flag details differ on a newer install.
+
+1. **Place and start the tab.** Use the requested working directory, or the user's current project
+   directory. Follow the layout rule: one space per checkout, tabs by default.
 
    ```bash
-   herdr pane list
-   herdr tab create --workspace <workspace-id> --cwd <absolute-path> --label <tab-label> --no-focus
+   herdr-app ls
    ```
 
-   Find the workspace whose panes already sit in that checkout (`herdr pane list` reports each
-   pane's `cwd` and `workspace_id`) and open a new tab there. Only when no workspace holds the
-   checkout, create one named after the repo (or reuse a shared scratch workspace for non-repo
-   directories):
+   When a space already matches that checkout folder, add a tab to it; otherwise create a space
+   named after the repo with the session as its first tab. Name the tab from the task (~22 chars
+   keeps it readable in the tab bar) and pass `--remote-control <task-label>`:
 
    ```bash
-   herdr workspace create --cwd <absolute-path> --label <repo-name> --no-focus
+   herdr-app do tab.new --space <space-id> --name "<task-label>" \
+     --folder <absolute-path> --argv '["claude","--remote-control","<task-label>"]'
+
+   herdr-app do space.new --name <repo> --tab "<task-label>" \
+     --folder <absolute-path> --argv '["claude","--remote-control","<task-label>"]'
    ```
 
-   Read the new pane id from the JSON output. If this session will write concurrently with
-   another writer on the same checkout, open a linked worktree instead so the writers never
-   share a tree:
+   Add `"--model","<alias>"` to `--argv` only when the user names a model (use the client's
+   floating alias, not a pinned version), and `"--effort","<level>"` only when requested. Pass
+   `--task "<text>"` only when the user supplied the opening prompt; `herdr-app` delivers it once
+   Claude is ready. If this session will write concurrently with another writer on the same
+   checkout, create a linked git worktree first and point `--folder` at it.
+
+   The JSON reply returns `{"space": "...", "tab": "...", "terminal": "tNN"}` or
+   `{"error": "..."}`. The `terminal` value (`tNN`) is the `hc` address for every later step. Do
+   not invent terminal or space ids or `HC_*` / `HERDR_*` environment variables, and do not
+   silently fall back to tmux. When `herdr-app ls` reports no open window, say so; a hidden
+   `herdr-core` session can still be started with `hc` and surfaced later via
+   `herdr-app do terminal.open`:
 
    ```bash
-   herdr worktree create --workspace <primary-workspace-id> --branch <branch> \
-     --label <tab-label> --no-focus
+   hc run --bg --name <label> --cwd <absolute-path> claude --remote-control <label>
    ```
 
-   Do not invent pane ids or `HERDR_*` environment variables.
-
-2. **Start Claude in the pane.** `herdr agent start` launches a supported agent in an existing
-   shell pane and waits for readiness; `claude --help` documents `--remote-control`:
+2. **Verify with `hc`, not screen guesses.**
 
    ```bash
-   herdr agent start <name> --kind claude --pane <pane-id> -- --remote-control <label>
+   hc get <tNN>               # status: idle | working | blocked | error
+   hc read --lines 80 <tNN>   # Remote Control indicator and session URL
    ```
 
-   Add `--model <alias>` after the native Claude arguments only when the user names a model.
-   Pass effort or other settings only when requested or required by the specific task. If Herdr
-   socket access is sandbox-blocked, use narrowly authorized escalation for the native command.
-   Do not fabricate a Herdr environment or silently switch to tmux.
+   Report the terminal address, the space and tab, and the Remote Control URL only when Claude
+   actually printed it. `blocked` means a person is needed (for example a trust dialog or a
+   one-time Remote Control confirmation): read the screen and report what is waiting rather than
+   answering for the human. Distinguish a launched process from verified Remote Control
+   availability, and name the exact check if one failed.
 
-3. **Verify.** Run `herdr agent get <name>` and
-   `herdr agent read <name> --source recent-unwrapped --lines 120`. Report the Herdr agent and
-   pane handle, and the Remote Control URL when Claude actually exposes it. Distinguish a
-   launched process from verified Remote Control availability. If the URL or readiness cannot
-   be verified, say exactly which check failed.
+3. **Send follow-up prompts only when asked.** Submit a later prompt via
+   `hc send <tNN> "<text>"` only when the user gave one, then run `hc read <tNN>` to confirm it
+   ran before claiming so. Never kill or remove a terminal you did not start.
 
-4. **Seed only when asked.** Submit an initial prompt through
-   `herdr agent prompt <name> "<text>" --wait` only when the user gave a task or seed. Inspect
-   the resulting agent state and response before claiming the prompt ran.
-
-If Herdr cannot provide an available pane or launch route, report that blocker.
+If Herdr cannot provide a window or launch route, report that blocker.
 
 ## Supervised task delegation
 
@@ -141,10 +148,11 @@ for a new interactive launch.
 <agentic-workflows-repo>/skills/claude-remote/scripts/start-claude-remote --cwd "$PWD"
 ```
 
-- It runs Claude with `--effort max`, `--settings '{"ultracode":true}'`, and
-  `--remote-control <label>`. Ultracode is a settings boolean, not an effort value.
-- `--model <model>` (or `CLAUDE_MODEL`) is optional. When unset, no model flag is passed and
-  the client default applies.
+- It runs Claude with `--effort <level>` (`medium` by default, or `CLAUDE_EFFORT`),
+  `--settings '{"ultracode":true}'`, and `--remote-control <label>`. Ultracode is a settings
+  boolean, not an effort value.
+- `--model <model>` (or `CLAUDE_MODEL`) and `--effort <level>` (or `CLAUDE_EFFORT`) are optional.
+  When `--model` is unset, no model flag is passed and the client default applies.
 - `--prompt <text>` seeds the session. Use it for compact handoff seeds, not transcripts.
 - `--settings-extra <json>` merges per-session hooks on top of the base settings. A value that
   is not a JSON object stops the launch with exit 2 instead of dropping the hooks.

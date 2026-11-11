@@ -219,20 +219,21 @@ and commits. The full contract and exit-code table are in
 flowchart LR
   Policy["Portable policy source"] --> ClaudeGuide["Claude Code global guide: imports the source"]
   Policy --> Render["Render with sha256"]
-  Render --> CodexGuide["Codex global guide: hash-marked managed block"]
+  Render --> CodexGuide["Codex & Gemini guides: hash-marked managed blocks"]
   Skills["One skill source per skill"] -->|symlink| ClaudeSkills["Claude Code skill path"]
   Skills -->|symlink| CodexSkills["Codex skill path plus openai.yaml"]
-  CodexGuide --> Check{"Check: import present once, block hash matches source?"}
+  CodexGuide --> Check{"Multi-ring audit: hashes, symlinks, hooks, docs, decision?"}
   ClaudeGuide --> Check
   Policy --> Check
   Check -->|no| Fail["Check fails on drift or hand edit"]
-  Check -->|yes| Pass["Both engines run one rulebook"]
+  Check -->|yes| Pass["Every client runs one rulebook"]
 ```
 
 The rules that matter most, such as who commits, what needs a gate, and how authorization travels,
-are written once and reach both engines from the same source. Skills are linked, never copied, so
-an improvement made in one client is live in the other. A check command fails when a rendered
-block no longer matches its source. See
+are written once and reach every client from the same source. Skills are linked, never copied, so
+an improvement made in one client is live in the others. A multi-ring drift check fails when a
+rendered block no longer matches its source or when skill links, hooks, docs, or continuity records
+fall out of sync. See
 [One policy, two engines](concepts/one-policy-two-engines.md),
 [`templates/portable-policy.md`](../templates/portable-policy.md), and
 [`templates/skill-registry.md`](../templates/skill-registry.md).
@@ -250,6 +251,7 @@ flowchart TD
   Pick -->|print only| Printed["Command shown, nothing dispatched"]
   Pick -->|chosen path| Dispatch["Dispatch"]
   Dispatch --> Answer["Just answer or research"]
+  Dispatch --> Oracle["Stateless specialist oracle (zero tools)"]
   Dispatch --> Plan["Plan first"]
   Dispatch --> Direct["Direct build in the main loop"]
   Dispatch --> Delegated["Delegated build: one engine implements, the other verifies"]
@@ -258,11 +260,13 @@ flowchart TD
 
 Triage runs in the main loop, with no classifier subagent, before any heavy workflow starts. It
 asks which stage discipline fits (interview, prototype, spec, diagnose, test-first, module design,
-domain modeling, or conflict resolution), then which engine runs it (just-answer, research, plan
-first, direct build, delegated build, or review), and the human owner picks from ranked options.
-The gate exists because one default-to-heavy run burned about 11.75M tokens across 317 agents and
-produced no diff. The working mode is chosen separately: prototype for end-to-end slices verified
-through use, or sdlc for plan and review checkpoints.
+domain modeling, stateless derivation, or conflict resolution), then which engine runs it
+(just-answer, stateless oracle, research, plan first, direct build, delegated build, or review),
+and the human owner picks from ranked options. The gate exists because one default-to-heavy run
+burned about 11.75M tokens across 317 agents and produced no diff. The working mode is chosen
+separately: `prototype` for end-to-end slices verified through use, `sdlc` for plan and review
+checkpoints, or `explore` to keep repositories read-only during first-principles synthesis with an
+anti-rabbit-hole gate on mid-task tangents.
 
 ## Public And Private Boundary
 

@@ -39,17 +39,26 @@ If a durable memory adapter is available, store the same compact handoff there. 
 handoff file or repo note close to the work, and list any decision that is still pending capture
 rather than inventing a record for it.
 
+Write when state would otherwise be lost, not by reflex on every trivial turn. When a clean commit
+and `git log -1` already explain a finished one-shot fix, skip the prose ceremony; capture a
+handoff when rejected alternatives, open loops, dirty trees, cross-session blockers, or live-system
+side effects matter to the next session. On the store side, a session that closes with a standing
+handoff already wrote its own best summary: [Black Box](https://github.com/nathanmauro/black-box)
+reuses that handoff directly as the session summary without spending an extra model call, falling
+back to model summarization only if substantial new work happened after the handoff.
+
 Compact captures compound. Over time, decisions, handoffs, observations, and projections can be
 assembled into a [project trajectory](project-trajectory.md): where the work has been, where it
 stands, and the plausible futures ahead of it.
 
 ## Failure Modes
 
-Transcript dumps are too noisy to use as handoffs and can expose private data. A handoff without a
-branch or dirty-state summary makes the next session guess where the work lives. A handoff without
-a next action preserves history but does not support progress. A handoff kept only in one
-client's session history strands the other engine. Secrets, tokens, raw logs, and private account
-data do not belong in a handoff.
+Transcript dumps are too noisy to use as handoffs and can expose private data. Indiscriminate
+writes on every turn create a write-only graveyard that drowns out real decisions at recall time. A
+handoff without a branch or dirty-state summary makes the next session guess where the work lives.
+A handoff without a next action preserves history but does not support progress. A handoff kept
+only in one client's session history strands the other engine. Secrets, tokens, raw logs, and
+private account data do not belong in a handoff.
 
 ## Related Templates
 

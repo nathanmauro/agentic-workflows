@@ -12,10 +12,11 @@ model that did not write the code reviews it.
 
 - A bounded Claude prompt: the question, the repo path, constraints, the relevant files, and the
   expected output shape.
-- A terminal multiplexer that can host and observe agent panes. The default is Herdr
-  ([herdr.dev](https://herdr.dev)): one workspace per checkout, agents as tabs. Claude Code Remote
-  Control is enabled on the new session so the human owner can join it from mobile. tmux is the
-  fallback, through the bundled [`start-claude-remote`][tmux-helper] script.
+- A terminal multiplexer that can host and observe agent terminals. The default is Herdr
+  ([herdr.dev](https://herdr.dev)): `herdr-app` places one space per checkout with agents as tabs,
+  and `hc` (`herdr-core`) runs and inspects the underlying terminal. Claude Code Remote Control is
+  enabled on the new session so the human owner can join it from mobile. Detached tmux is the
+  portable fallback, through the bundled [`start-claude-remote`][tmux-helper] script.
 - An authorization record that carries the human owner's exact words, their source, the
   destination, the authorized payload, and the limits
   (see [Authorization provenance](../concepts/authorization-provenance.md)).
@@ -28,17 +29,20 @@ model that did not write the code reviews it.
 2. Codex fills the authorization record from what the human owner actually said. "Start Claude and
    ask it X" authorizes both the launch and delivery of X; it does not authorize attaching other
    records that Codex can read locally. An agent-written task is not new consent.
-3. Codex places the session. It reuses the Herdr workspace that already holds this checkout as a
-   new tab, or creates one when none exists. If Claude will write while another writer is active on
-   the same checkout, it gets a linked worktree instead.
-4. Codex starts Claude in that pane with Remote Control on, using the configured Claude model unless
-   the human owner named another. It honors an explicit request for tmux, no Remote Control, or a
-   specific model.
-5. Codex verifies the launch and reports what it observed: the pane handle, and the Remote Control
-   URL only if Claude actually exposed one. A launched process and a reachable Remote Control
-   session are different claims; if a check fails, Codex names that check.
-6. Codex sends the bounded prompt only when the human owner supplied a task, then inspects the
-   agent's state and reply before claiming the prompt ran.
+3. Codex places the session. It checks `herdr-app ls`, adds a tab to the Herdr space that already
+   holds this checkout (`herdr-app do tab.new`), or creates a space named after the repo
+   (`herdr-app do space.new`) when none exists. If Claude will write while another writer is active
+   on the same checkout, Codex creates a linked git worktree first and points `--folder` at it.
+4. Codex starts Claude in that terminal with Remote Control on, using the configured Claude model
+   and effort unless the human owner named another. When no Herdr window is open, `hc run --bg`
+   starts a hidden `herdr-core` terminal that can be opened later with `herdr-app do terminal.open`.
+   It honors an explicit request for tmux, no Remote Control, or a specific model.
+5. Codex verifies the launch via `hc get` and `hc read` and reports what it observed: the terminal
+   address (`tNN`), the space and tab, and the Remote Control URL only if Claude actually exposed
+   one. A launched process and a reachable Remote Control session are different claims; if a check
+   fails, Codex names that check.
+6. Codex passes `--task` on launch or sends a prompt via `hc send` only when the human owner
+   supplied a task, then inspects `hc read` before claiming the prompt ran.
 7. Claude returns findings, a plan, or a recommendation.
 8. Codex checks the response against local repo evidence and decides what to implement, adapt, or
    ignore. Nothing is accepted because it sounds right.
